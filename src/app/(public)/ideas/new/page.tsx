@@ -97,6 +97,7 @@ export default function NewIdeaPage() {
                 <Input
                   label="Idea Title"
                   id="title"
+                  required
                   placeholder="e.g., Monthly neighborhood cleanup"
                   error={errors.title?.message}
                   {...register("title")}
@@ -113,6 +114,7 @@ export default function NewIdeaPage() {
                 <Input
                   label="Your Name"
                   id="submitterName"
+                  required
                   placeholder="Enter your name"
                   error={errors.submitterName?.message}
                   {...register("submitterName")}
@@ -121,6 +123,7 @@ export default function NewIdeaPage() {
                 <Input
                   label="Your Email"
                   id="submitterEmail"
+                  required
                   type="email"
                   placeholder="your@email.com"
                   error={errors.submitterEmail?.message}

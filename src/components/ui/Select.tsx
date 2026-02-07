@@ -4,17 +4,19 @@ import { cn } from "@/lib/utils";
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
+  required?: boolean;
   options: { value: string; label: string }[];
   placeholder?: string;
 }
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, label, error, id, options, placeholder, ...props }, ref) => {
+  ({ className, label, error, id, required, options, placeholder, ...props }, ref) => {
     return (
       <div className="w-full">
         {label && (
           <label htmlFor={id} className="mb-1 block text-sm font-medium text-gray-700">
             {label}
+            {required && <span className="ml-0.5 text-red-500">*</span>}
           </label>
         )}
         <select

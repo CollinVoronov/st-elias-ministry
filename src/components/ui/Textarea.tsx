@@ -4,15 +4,17 @@ import { cn } from "@/lib/utils";
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
+  required?: boolean;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, label, error, id, ...props }, ref) => {
+  ({ className, label, error, id, required, ...props }, ref) => {
     return (
       <div className="w-full">
         {label && (
           <label htmlFor={id} className="mb-1 block text-sm font-medium text-gray-700">
             {label}
+            {required && <span className="ml-0.5 text-red-500">*</span>}
           </label>
         )}
         <textarea

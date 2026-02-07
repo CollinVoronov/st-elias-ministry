@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     const event = await prisma.event.create({
       data: {
         title: validated.title,
-        description: validated.description,
+        description: validated.description || "",
         date: new Date(validated.date),
         endDate: validated.endDate ? new Date(validated.endDate) : null,
         location: validated.location,

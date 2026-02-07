@@ -26,18 +26,13 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await request.json();
     const validated = ideaSchema.parse(body);
 
     const idea = await prisma.idea.create({
       data: {
         title: validated.title,
-        description: validated.description,
+        description: validated.description || "",
         submitterName: validated.submitterName,
         submitterEmail: validated.submitterEmail,
       },

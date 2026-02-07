@@ -52,7 +52,7 @@ export async function PUT(
       where: { id: params.id },
       data: {
         title: validated.title,
-        description: validated.description,
+        description: validated.description || "",
         date: new Date(validated.date),
         endDate: validated.endDate ? new Date(validated.endDate) : null,
         location: validated.location,

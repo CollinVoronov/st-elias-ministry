@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Church, MapPin, Phone } from "lucide-react";
+import Image from "next/image";
+import { MapPin, Phone } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 
 export function Footer() {
@@ -10,7 +11,7 @@ export function Footer() {
           {/* Church Info */}
           <div>
             <div className="flex items-center gap-2">
-              <Church className="h-6 w-6 text-accent-400" />
+              <Image src="/logo.avif" alt="St. Elias" width={24} height={24} className="rounded" />
               <span className="font-display text-lg font-semibold text-white">
                 St. Elias Orthodox Church
               </span>

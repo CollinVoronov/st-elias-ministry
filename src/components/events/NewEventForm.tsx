@@ -46,6 +46,7 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
   const [ministries, setMinistries] = useState<{ id: string; name: string }[]>([]);
   const [showNewMinistry, setShowNewMinistry] = useState(false);
   const [newMinistryName, setNewMinistryName] = useState("");
+  const [newMinistryColor, setNewMinistryColor] = useState("#4263eb");
   const [creatingMinistry, setCreatingMinistry] = useState(false);
 
   useEffect(() => {
@@ -96,7 +97,7 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
       const res = await fetch("/api/ministries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newMinistryName }),
+        body: JSON.stringify({ name: newMinistryName, color: newMinistryColor }),
       });
       if (res.ok) {
         const result = await res.json();
@@ -104,6 +105,7 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
         setMinistries((prev) => [...prev, created]);
         setValue("ministryId", created.id);
         setNewMinistryName("");
+        setNewMinistryColor("#4263eb");
         setShowNewMinistry(false);
       }
     } catch {}
@@ -189,6 +191,7 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
               <Input
                 label="Event Title"
                 id="title"
+                required
                 placeholder="e.g., Community Garden Day"
                 error={errors.title?.message}
                 {...register("title")}
@@ -209,12 +212,13 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
                 <Input
                   label="Start Date & Time"
                   id="date"
+                  required
                   type="datetime-local"
                   error={errors.date?.message}
                   {...register("date")}
                 />
                 <Input
-                  label="End Date & Time (optional)"
+                  label="End Date & Time"
                   id="endDate"
                   type="datetime-local"
                   error={errors.endDate?.message}
@@ -224,12 +228,13 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
               <Input
                 label="Location"
                 id="location"
+                required
                 placeholder="e.g., St. Elias Church Hall"
                 error={errors.location?.message}
                 {...register("location")}
               />
               <Input
-                label="Full Address (optional)"
+                label="Full Address"
                 id="address"
                 placeholder="408 East 11th Street, Austin, TX 78701"
                 error={errors.address?.message}
@@ -242,7 +247,7 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
               <legend className="px-1 text-sm font-semibold text-primary-900">Additional Settings</legend>
 
               <Input
-                label="Max Volunteers (optional)"
+                label="Max Volunteers"
                 id="maxVolunteers"
                 type="number"
                 placeholder="Leave empty for unlimited"
@@ -257,7 +262,7 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
                 <div className="flex items-center gap-2">
                   <div className="flex-1">
                     <Select
-                      label="Ministry (optional)"
+                      label="Ministry"
                       id="ministryId"
                       options={ministries.map((m) => ({ value: m.id, label: m.name }))}
                       placeholder="Select ministry..."
@@ -286,6 +291,18 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
                         placeholder="e.g., Youth Ministry"
                         value={newMinistryName}
                         onChange={(e) => setNewMinistryName(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="new-ministry-color" className="mb-1 block text-sm font-medium text-gray-700">
+                        Color
+                      </label>
+                      <input
+                        type="color"
+                        id="new-ministry-color"
+                        value={newMinistryColor}
+                        onChange={(e) => setNewMinistryColor(e.target.value)}
+                        className="h-[38px] w-12 cursor-pointer rounded-lg border border-gray-300"
                       />
                     </div>
                     <Button
@@ -360,7 +377,7 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
               </div>
 
               <Input
-                label="Event Image URL (optional)"
+                label="Event Image URL"
                 id="imageUrl"
                 type="url"
                 placeholder="https://example.com/image.jpg"

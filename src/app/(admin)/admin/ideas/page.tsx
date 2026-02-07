@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Lightbulb, Check, X } from "lucide-react";
+import Link from "next/link";
+import { Lightbulb, Check, X, Plus } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Badge } from "@/components/ui/Badge";
@@ -69,6 +70,14 @@ export default function AdminIdeasPage() {
       <SectionHeader
         title="Manage Ideas"
         description="Review community service ideas submitted by members."
+        action={
+          <Link href="/admin/ideas/new">
+            <Button>
+              <Plus className="h-4 w-4" />
+              New Idea
+            </Button>
+          </Link>
+        }
       />
 
       {ideas.length > 0 ? (

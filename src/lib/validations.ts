@@ -12,7 +12,7 @@ export type VolunteerSignUpInput = z.infer<typeof volunteerSignUpSchema>;
 
 export const eventSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+  description: z.string().optional(),
   date: z.string().min(1, "Date is required"),
   endDate: z.string().optional(),
   location: z.string().min(2, "Location is required"),
@@ -31,7 +31,7 @@ export type EventInput = z.infer<typeof eventSchema>;
 
 export const ideaSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+  description: z.string().optional(),
   submitterName: z.string().min(2, "Name is required"),
   submitterEmail: z.string().email("Please enter a valid email"),
 });

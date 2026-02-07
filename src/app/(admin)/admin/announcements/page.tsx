@@ -96,6 +96,7 @@ export default function AdminAnnouncementsPage() {
               <Input
                 label="Subject"
                 id="title"
+                required
                 placeholder="Announcement subject line"
                 error={errors.title?.message}
                 {...register("title")}
@@ -103,12 +104,13 @@ export default function AdminAnnouncementsPage() {
               <Textarea
                 label="Message"
                 id="body"
+                required
                 placeholder="What do you want to announce?"
                 error={errors.body?.message}
                 {...register("body")}
               />
               <Input
-                label="Preview Text (optional)"
+                label="Preview Text"
                 id="previewText"
                 placeholder="Short summary for email previews"
                 error={errors.previewText?.message}
@@ -127,7 +129,7 @@ export default function AdminAnnouncementsPage() {
               </div>
               {watchIsPinned && (
                 <Input
-                  label="Expires At (optional)"
+                  label="Expires At"
                   id="expiresAt"
                   type="datetime-local"
                   {...register("expiresAt")}
