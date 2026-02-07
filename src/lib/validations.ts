@@ -47,3 +47,12 @@ export const announcementSchema = z.object({
 });
 
 export type AnnouncementInput = z.infer<typeof announcementSchema>;
+
+export const registerSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  organization: z.string().min(2, "Organization name is required"),
+});
+
+export type RegisterInput = z.infer<typeof registerSchema>;

@@ -4,9 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  CalendarDays,
-  Users,
-  Megaphone,
+  LayoutDashboard,
   FileText,
   LogOut,
   ExternalLink,
@@ -14,13 +12,11 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/admin/events", label: "Events & Opportunities", icon: CalendarDays },
-  { href: "/admin/volunteers", label: "Volunteers", icon: Users },
-  { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
-  { href: "/admin/proposals", label: "Proposals", icon: FileText },
+  { href: "/community", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/community/proposals", label: "My Proposals", icon: FileText },
 ];
 
-export function AdminSidebar() {
+export function CommunitySidebar() {
   const pathname = usePathname();
 
   return (
@@ -32,14 +28,17 @@ export function AdminSidebar() {
           <span className="font-display text-sm font-bold leading-tight text-primary-900">
             St. Elias
           </span>
-          <span className="text-xs leading-tight text-gray-600">Admin Panel</span>
+          <span className="text-xs leading-tight text-gray-600">Community Portal</span>
         </div>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+          const isActive =
+            item.href === "/community"
+              ? pathname === "/community"
+              : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}

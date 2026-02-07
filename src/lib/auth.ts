@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -8,7 +9,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   providers: [
     CredentialsProvider({
-      name: "Test Account",
+      name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
@@ -17,16 +18,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = credentials?.email as string;
         const password = credentials?.password as string;
 
-        if (
-          email === "organizer@sainteliaschurch.org" &&
-          password === "testpassword123"
-        ) {
-          const user = await prisma.user.findUnique({ where: { email } });
-          if (user) {
-            return { id: user.id, email: user.email, name: user.name };
-          }
-        }
-        return null;
+        if (!email || !password) return null;
+
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user || !user.password) return null;
+
+        const isValid = bcrypt.compareSync(password, user.password);
+        if (!isValid) return null;
+
+        return { id: user.id, email: user.email, name: user.name };
       },
     }),
   ],
@@ -37,17 +37,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id as string },
+          select: { role: true, organization: true },
+        });
+        token.role = dbUser?.role || "ORGANIZER";
+        token.organization = dbUser?.organization || null;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user && token.id) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { role: true },
-        });
         session.user.id = token.id as string;
-        session.user.role = dbUser?.role || "ORGANIZER";
+        session.user.role = token.role as string;
+        session.user.organization = token.organization as string | undefined;
       }
       return session;
     },

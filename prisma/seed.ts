@@ -1,18 +1,23 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log("Seeding database...");
 
+  const hashedPassword = bcrypt.hashSync("testpassword123", 10);
+  const communityPassword = bcrypt.hashSync("community123", 10);
+
   // Create admin user
   const admin = await prisma.user.upsert({
     where: { email: "admin@sainteliaschurch.org" },
-    update: {},
+    update: { password: hashedPassword },
     create: {
       email: "admin@sainteliaschurch.org",
       name: "Admin",
       role: "ADMIN",
+      password: hashedPassword,
     },
   });
 
@@ -21,15 +26,31 @@ async function main() {
   // Create test organizer
   const organizer = await prisma.user.upsert({
     where: { email: "organizer@sainteliaschurch.org" },
-    update: {},
+    update: { password: hashedPassword },
     create: {
       email: "organizer@sainteliaschurch.org",
       name: "Test Organizer",
       role: "ORGANIZER",
+      password: hashedPassword,
     },
   });
 
   console.log("Created test organizer:", organizer.email);
+
+  // Create community user
+  const communityUser = await prisma.user.upsert({
+    where: { email: "community@austinfoodbank.org" },
+    update: { password: communityPassword },
+    create: {
+      email: "community@austinfoodbank.org",
+      name: "Food Bank Coordinator",
+      role: "COMMUNITY",
+      organization: "Austin Food Bank",
+      password: communityPassword,
+    },
+  });
+
+  console.log("Created community user:", communityUser.email);
 
   // Create ministries
   const outreach = await prisma.ministry.upsert({
@@ -139,6 +160,26 @@ async function main() {
   });
 
   console.log("Created sample events");
+
+  // Create a sample community proposal (DRAFT event)
+  await prisma.event.create({
+    data: {
+      title: "Emergency Food Distribution",
+      description:
+        "The Austin Food Bank needs volunteers to help distribute food packages to families affected by recent storms. This is a one-day event at our downtown distribution center.",
+      date: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
+      location: "Austin Food Bank Distribution Center",
+      address: "1234 Food Bank Drive, Austin, TX 78702",
+      status: "DRAFT",
+      isExternal: true,
+      externalOrganizer: "Austin Food Bank",
+      maxVolunteers: 40,
+      whatToBring: ["Comfortable shoes", "Water bottle"],
+      organizerId: communityUser.id,
+    },
+  });
+
+  console.log("Created sample community proposal");
 
   // Create sample volunteers and RSVPs
   const vol1 = await prisma.volunteer.create({
