@@ -63,6 +63,10 @@ export async function PUT(
         whatToBring: validated.whatToBring || [],
         ministryId: validated.ministryId || null,
         imageUrl: validated.imageUrl || null,
+        isExternal: validated.isExternal || false,
+        isRecurring: validated.isRecurring || false,
+        recurrencePattern: validated.recurrencePattern || null,
+        externalOrganizer: validated.externalOrganizer || null,
       },
     });
 

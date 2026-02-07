@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Plus, Calendar } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -7,6 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
+import { EventsFilterBar } from "@/components/events/EventsFilterBar";
 
 export const dynamic = "force-dynamic";
 
@@ -17,8 +19,13 @@ const statusVariant: Record<string, "default" | "success" | "warning" | "danger"
   COMPLETED: "info",
 };
 
-async function getAllEvents() {
+interface Props {
+  searchParams: { ministry?: string };
+}
+
+async function getAllEvents(ministryId?: string) {
   return prisma.event.findMany({
+    where: ministryId ? { ministryId } : {},
     include: {
       ministry: true,
       organizer: { select: { name: true } },
@@ -28,14 +35,21 @@ async function getAllEvents() {
   });
 }
 
-export default async function AdminEventsPage() {
-  const events = await getAllEvents();
+async function getAllMinistries() {
+  return prisma.ministry.findMany({ orderBy: { name: "asc" } });
+}
+
+export default async function AdminEventsPage({ searchParams }: Props) {
+  const [events, ministries] = await Promise.all([
+    getAllEvents(searchParams.ministry || undefined),
+    getAllMinistries(),
+  ]);
 
   return (
     <Container>
       <SectionHeader
-        title="Manage Events"
-        description="Create, edit, and manage community service events."
+        title="Events & Opportunities"
+        description="Create, edit, and manage community service events and external opportunities."
         action={
           <Link href="/admin/events/new">
             <Button>
@@ -46,8 +60,14 @@ export default async function AdminEventsPage() {
         }
       />
 
+      <div className="mt-4">
+        <Suspense>
+          <EventsFilterBar ministries={ministries} />
+        </Suspense>
+      </div>
+
       {events.length > 0 ? (
-        <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div className="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-white">
           <table className="w-full">
             <thead className="bg-cream">
               <tr>
@@ -59,6 +79,9 @@ export default async function AdminEventsPage() {
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
                   Status
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
+                  Type
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
                   Volunteers
@@ -89,6 +112,19 @@ export default async function AdminEventsPage() {
                       {event.status}
                     </Badge>
                   </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-1">
+                      {event.isExternal && (
+                        <Badge variant="warning">External</Badge>
+                      )}
+                      {event.isRecurring && (
+                        <Badge variant="info">Recurring</Badge>
+                      )}
+                      {!event.isExternal && !event.isRecurring && (
+                        <span className="text-sm text-gray-400">Church</span>
+                      )}
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-sm text-gray-600">
                     {event._count.rsvps}
                     {event.maxVolunteers && ` / ${event.maxVolunteers}`}
@@ -112,8 +148,8 @@ export default async function AdminEventsPage() {
         <div className="mt-6">
           <EmptyState
             icon={Calendar}
-            title="No events yet"
-            description="Create your first community service event."
+            title="No events found"
+            description="No events match your current filter. Try removing the filter or create a new event."
             action={
               <Link href="/admin/events/new">
                 <Button>

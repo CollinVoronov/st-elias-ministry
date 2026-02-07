@@ -8,7 +8,6 @@ import {
   Users,
   Lightbulb,
   Megaphone,
-  Building2,
   BarChart3,
   LogOut,
   Church,
@@ -17,11 +16,10 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/events", label: "Events", icon: CalendarDays },
+  { href: "/admin/events", label: "Events & Opportunities", icon: CalendarDays },
   { href: "/admin/volunteers", label: "Volunteers", icon: Users },
   { href: "/admin/ideas", label: "Ideas", icon: Lightbulb },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
-  { href: "/admin/ministries", label: "Ministries", icon: Building2 },
   { href: "/admin/reports", label: "Reports", icon: BarChart3 },
 ];
 

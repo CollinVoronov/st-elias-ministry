@@ -11,9 +11,11 @@ RUN npx prisma generate
 
 # Build the application
 FROM base AS builder
+RUN apk add --no-cache openssl
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN npx prisma db push --skip-generate 2>/dev/null || true
 RUN npm run build
 
 # Production runner

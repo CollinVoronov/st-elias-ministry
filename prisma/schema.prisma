@@ -133,6 +133,10 @@ model Event {
   maxVolunteers Int?
   whatToBring   String[]
   imageUrl      String?
+  isExternal         Boolean  @default(false)
+  isRecurring        Boolean  @default(false)
+  recurrencePattern  String?
+  externalOrganizer  String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 

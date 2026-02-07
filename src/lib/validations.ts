@@ -21,6 +21,10 @@ export const eventSchema = z.object({
   whatToBring: z.array(z.string()).optional(),
   ministryId: z.string().optional(),
   imageUrl: z.string().url().optional().or(z.literal("")),
+  isExternal: z.boolean().optional(),
+  isRecurring: z.boolean().optional(),
+  recurrencePattern: z.string().optional(),
+  externalOrganizer: z.string().optional(),
 });
 
 export type EventInput = z.infer<typeof eventSchema>;
