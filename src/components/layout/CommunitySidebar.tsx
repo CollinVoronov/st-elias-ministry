@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   FileText,
@@ -11,6 +10,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { signOutAction } from "@/lib/actions";
 
 const navItems = [
   { href: "/community", label: "Dashboard", icon: LayoutDashboard },
@@ -67,13 +67,15 @@ export function CommunitySidebar() {
           <ExternalLink className="h-4 w-4" />
           View Public Site
         </Link>
-        <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-cream hover:text-red-600"
-        >
-          <LogOut className="h-4 w-4" />
-          Sign Out
-        </button>
+        <form action={signOutAction}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-cream hover:text-red-600"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </button>
+        </form>
       </div>
     </aside>
   );
