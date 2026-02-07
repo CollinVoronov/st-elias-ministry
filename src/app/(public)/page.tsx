@@ -101,36 +101,6 @@ async function getCalendarEvents() {
   return expandRecurringEvents(mapped);
 }
 
-async function getListEvents() {
-  const events = await prisma.event.findMany({
-    where: {
-      status: "PUBLISHED",
-      date: { gte: new Date() },
-    },
-    include: {
-      ministry: true,
-      _count: { select: { rsvps: true } },
-    },
-    orderBy: { date: "asc" },
-  });
-  const mapped = events.map((e) => ({
-    id: e.id,
-    title: e.title,
-    description: e.description,
-    date: e.date.toISOString(),
-    location: e.location,
-    imageUrl: e.imageUrl,
-    maxVolunteers: e.maxVolunteers,
-    rsvpCount: e._count.rsvps,
-    isExternal: e.isExternal,
-    isRecurring: e.isRecurring,
-    recurrencePattern: e.recurrencePattern,
-    externalOrganizer: e.externalOrganizer,
-    ministry: e.ministry ? { name: e.ministry.name, color: e.ministry.color } : null,
-  }));
-  return expandRecurringEvents(mapped);
-}
-
 async function getImpactStats() {
   const [eventCount, volunteerCount, totalHours, rsvpCount] = await Promise.all([
     prisma.event.count({ where: { status: "COMPLETED" } }),
@@ -147,10 +117,9 @@ async function getImpactStats() {
 }
 
 export default async function HomePage() {
-  const [announcements, calendarEvents, listEvents, stats] = await Promise.all([
+  const [announcements, calendarEvents, stats] = await Promise.all([
     getAnnouncements(),
     getCalendarEvents(),
-    getListEvents(),
     getImpactStats(),
   ]);
 
@@ -220,7 +189,6 @@ export default async function HomePage() {
           <div className="mt-8">
             <EventsPageContent
               calendarEvents={calendarEvents}
-              listEvents={listEvents}
             />
           </div>
         </Container>
