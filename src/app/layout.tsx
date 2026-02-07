@@ -1,5 +1,18 @@
 import type { Metadata } from "next";
+import { EB_Garamond, Inter } from "next/font/google";
 import "./globals.css";
+
+const ebGaramond = EB_Garamond({
+  subsets: ["latin"],
+  variable: "--font-eb-garamond",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -22,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-white font-sans antialiased">
+    <html lang="en" className={`${ebGaramond.variable} ${inter.variable}`}>
+      <body className="min-h-screen bg-cream font-sans antialiased">
         {children}
       </body>
     </html>

@@ -79,44 +79,44 @@ export default async function EventDetailPage({ params }: Props) {
               {isPast && <Badge variant="default">Past Event</Badge>}
             </div>
 
-            <h1 className="mt-3 font-display text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h1 className="mt-3 font-display text-3xl font-bold text-primary-900 sm:text-4xl">
               {event.title}
             </h1>
 
             {/* Event Details Grid */}
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <div className="flex items-start gap-3 rounded-lg bg-gray-50 p-4">
+              <div className="flex items-start gap-3 rounded-lg bg-cream p-4">
                 <CalendarDays className="mt-0.5 h-5 w-5 text-primary-600" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Date</p>
-                  <p className="text-sm text-gray-500">{formatDate(event.date)}</p>
+                  <p className="text-sm font-medium text-primary-900">Date</p>
+                  <p className="text-sm text-gray-600">{formatDate(event.date)}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-lg bg-gray-50 p-4">
+              <div className="flex items-start gap-3 rounded-lg bg-cream p-4">
                 <Clock className="mt-0.5 h-5 w-5 text-primary-600" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Time</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm font-medium text-primary-900">Time</p>
+                  <p className="text-sm text-gray-600">
                     {formatTime(event.date)}
                     {event.endDate && ` - ${formatTime(event.endDate)}`}
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-lg bg-gray-50 p-4">
+              <div className="flex items-start gap-3 rounded-lg bg-cream p-4">
                 <MapPin className="mt-0.5 h-5 w-5 text-primary-600" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Location</p>
-                  <p className="text-sm text-gray-500">{event.location}</p>
+                  <p className="text-sm font-medium text-primary-900">Location</p>
+                  <p className="text-sm text-gray-600">{event.location}</p>
                   {event.address && (
                     <p className="text-xs text-gray-400">{event.address}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-lg bg-gray-50 p-4">
+              <div className="flex items-start gap-3 rounded-lg bg-cream p-4">
                 <Users className="mt-0.5 h-5 w-5 text-primary-600" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Volunteers</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm font-medium text-primary-900">Volunteers</p>
+                  <p className="text-sm text-gray-600">
                     {event._count.rsvps} signed up
                     {spotsLeft !== null && ` (${spotsLeft} spots left)`}
                   </p>
@@ -126,7 +126,7 @@ export default async function EventDetailPage({ params }: Props) {
 
             {/* Description */}
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-gray-900">About This Event</h2>
+              <h2 className="text-lg font-semibold text-primary-900">About This Event</h2>
               <div className="mt-3 whitespace-pre-wrap text-gray-600">
                 {event.description}
               </div>
@@ -135,7 +135,7 @@ export default async function EventDetailPage({ params }: Props) {
             {/* What to Bring */}
             {event.whatToBring.length > 0 && (
               <div className="mt-8">
-                <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+                <h2 className="flex items-center gap-2 text-lg font-semibold text-primary-900">
                   <Package className="h-5 w-5 text-primary-600" />
                   What to Bring
                 </h2>
@@ -153,7 +153,7 @@ export default async function EventDetailPage({ params }: Props) {
             {/* Volunteers List */}
             {event.rsvps.length > 0 && (
               <div className="mt-8">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-primary-900">
                   Volunteers ({event.rsvps.length})
                 </h2>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -187,14 +187,14 @@ export default async function EventDetailPage({ params }: Props) {
                 <CardContent className="py-6">
                   {isPast ? (
                     <div className="text-center">
-                      <p className="text-gray-500">This event has already taken place.</p>
+                      <p className="text-gray-600">This event has already taken place.</p>
                     </div>
                   ) : isFull ? (
                     <div className="text-center">
                       <p className="font-medium text-yellow-700">
                         This event is full.
                       </p>
-                      <p className="mt-1 text-sm text-gray-500">
+                      <p className="mt-1 text-sm text-gray-600">
                         Check back later — spots may open up.
                       </p>
                     </div>
@@ -205,7 +205,7 @@ export default async function EventDetailPage({ params }: Props) {
               </Card>
 
               {/* Organizer Info */}
-              <div className="mt-4 rounded-xl bg-gray-50 p-4">
+              <div className="mt-4 rounded-xl bg-cream p-4">
                 <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
                   Organized by
                 </p>

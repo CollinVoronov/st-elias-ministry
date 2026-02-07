@@ -47,8 +47,8 @@ export default async function AdminDashboardPage() {
   return (
     <Container>
       <div className="mb-8">
-        <h1 className="font-display text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="font-display text-2xl font-bold text-primary-900">Dashboard</h1>
+        <p className="mt-1 text-sm text-gray-600">
           Overview of your community service activity.
         </p>
       </div>
@@ -70,7 +70,7 @@ export default async function AdminDashboardPage() {
         {/* Upcoming Events */}
         <div className="rounded-xl border border-gray-200 bg-white p-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Upcoming Events</h2>
+            <h2 className="text-lg font-semibold text-primary-900">Upcoming Events</h2>
             <Link href="/admin/events">
               <Button variant="ghost" size="sm">
                 View All <ArrowRight className="h-3 w-3" />
@@ -83,11 +83,11 @@ export default async function AdminDashboardPage() {
                 <Link
                   key={event.id}
                   href={`/admin/events/${event.id}`}
-                  className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-gray-50"
+                  className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-cream"
                 >
                   <div>
                     <p className="text-sm font-medium text-gray-900">{event.title}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-600">
                       {new Date(event.date).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -113,7 +113,7 @@ export default async function AdminDashboardPage() {
         {/* Recent Sign-ups */}
         <div className="rounded-xl border border-gray-200 bg-white p-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Sign-ups</h2>
+            <h2 className="text-lg font-semibold text-primary-900">Recent Sign-ups</h2>
             <Link href="/admin/volunteers">
               <Button variant="ghost" size="sm">
                 View All <ArrowRight className="h-3 w-3" />
@@ -128,7 +128,7 @@ export default async function AdminDashboardPage() {
                     <p className="text-sm font-medium text-gray-900">
                       {rsvp.volunteer.name}
                     </p>
-                    <p className="text-xs text-gray-500">{rsvp.volunteer.email}</p>
+                    <p className="text-xs text-gray-600">{rsvp.volunteer.email}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs font-medium text-gray-700">

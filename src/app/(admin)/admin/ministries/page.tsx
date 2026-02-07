@@ -124,10 +124,10 @@ export default function AdminMinistriesPage() {
                   className="h-4 w-4 rounded-full"
                   style={{ backgroundColor: ministry.color || "#4263eb" }}
                 />
-                <h3 className="font-semibold text-gray-900">{ministry.name}</h3>
+                <h3 className="font-semibold text-primary-900">{ministry.name}</h3>
               </div>
               {ministry.description && (
-                <p className="mt-2 text-sm text-gray-500">{ministry.description}</p>
+                <p className="mt-2 text-sm text-gray-600">{ministry.description}</p>
               )}
             </div>
           ))}

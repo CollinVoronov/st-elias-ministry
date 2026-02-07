@@ -51,10 +51,10 @@ export default function NewIdeaPage() {
       <div className="flex min-h-[50vh] items-center justify-center py-12">
         <div className="mx-auto max-w-sm text-center">
           <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
-          <h2 className="mt-4 font-display text-2xl font-bold text-gray-900">
+          <h2 className="mt-4 font-display text-2xl font-bold text-primary-900">
             Idea Submitted!
           </h2>
-          <p className="mt-2 text-gray-500">
+          <p className="mt-2 text-gray-600">
             Thank you for sharing your idea. Our team will review it and the
             community can vote on it.
           </p>
@@ -75,11 +75,11 @@ export default function NewIdeaPage() {
       <Container size="sm">
         <div className="mx-auto max-w-lg">
           <div className="text-center">
-            <Lightbulb className="mx-auto h-10 w-10 text-gold-500" />
-            <h1 className="mt-4 font-display text-3xl font-bold text-gray-900">
+            <Lightbulb className="mx-auto h-10 w-10 text-accent-500" />
+            <h1 className="mt-4 font-display text-3xl font-bold text-primary-900">
               Submit a Service Idea
             </h1>
-            <p className="mt-2 text-gray-500">
+            <p className="mt-2 text-gray-600">
               Have an idea for how we can serve our community? Share it and let
               others vote!
             </p>

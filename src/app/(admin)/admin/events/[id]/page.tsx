@@ -52,7 +52,7 @@ export default async function AdminEventDetailPage({ params }: Props) {
     <Container>
       <Link
         href="/admin/events"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-700"
+        className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-primary-700"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Events
@@ -61,12 +61,12 @@ export default async function AdminEventDetailPage({ params }: Props) {
       <div className="mt-4 flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="font-display text-2xl font-bold text-gray-900">
+            <h1 className="font-display text-2xl font-bold text-primary-900">
               {event.title}
             </h1>
             <Badge variant={statusVariant[event.status]}>{event.status}</Badge>
           </div>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-600">
             Organized by {event.organizer.name}
           </p>
         </div>
@@ -98,7 +98,7 @@ export default async function AdminEventDetailPage({ params }: Props) {
       <Card className="mt-8">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-primary-900">
               Volunteers ({event.rsvps.length})
             </h2>
           </div>
@@ -106,31 +106,31 @@ export default async function AdminEventDetailPage({ params }: Props) {
         <CardContent className="p-0">
           {event.rsvps.length > 0 ? (
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-cream">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
                     Name
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
                     Email
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
                     Phone
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
                     Role
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
                     Status
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
                     Signed Up
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {event.rsvps.map((rsvp) => (
-                  <tr key={rsvp.id} className="hover:bg-gray-50">
+                  <tr key={rsvp.id} className="hover:bg-cream">
                     <td className="px-4 py-3 text-sm font-medium text-gray-900">
                       {rsvp.volunteer.name}
                     </td>
@@ -147,7 +147,7 @@ export default async function AdminEventDetailPage({ params }: Props) {
                       {rsvp.volunteer.phone ? (
                         <a
                           href={`tel:${rsvp.volunteer.phone}`}
-                          className="flex items-center gap-1 text-sm text-gray-500"
+                          className="flex items-center gap-1 text-sm text-gray-600"
                         >
                           <Phone className="h-3 w-3" />
                           {rsvp.volunteer.phone}
@@ -156,7 +156,7 @@ export default async function AdminEventDetailPage({ params }: Props) {
                         <span className="text-sm text-gray-300">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
+                    <td className="px-4 py-3 text-sm text-gray-600">
                       {rsvp.role?.name || "—"}
                     </td>
                     <td className="px-4 py-3">
@@ -182,7 +182,7 @@ export default async function AdminEventDetailPage({ params }: Props) {
       {/* Event Description */}
       <Card className="mt-6">
         <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900">Description</h2>
+          <h2 className="text-lg font-semibold text-primary-900">Description</h2>
         </CardHeader>
         <CardContent>
           <div className="whitespace-pre-wrap text-sm text-gray-600">

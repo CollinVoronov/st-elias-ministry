@@ -19,17 +19,17 @@ export function PublicHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-primary-800 bg-primary-900 shadow-md">
       <Container>
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <Church className="h-7 w-7 text-primary-700" />
+          <Link href="/" className="flex items-center gap-2.5">
+            <Church className="h-7 w-7 text-accent-400" />
             <div className="flex flex-col">
-              <span className="font-display text-lg font-bold leading-tight text-gray-900">
+              <span className="font-display text-lg font-semibold leading-tight text-white">
                 St. Elias
               </span>
-              <span className="text-xs leading-tight text-gray-500">
+              <span className="text-xs leading-tight text-primary-300">
                 Community Service
               </span>
             </div>
@@ -42,10 +42,10 @@ export function PublicHeader() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100",
+                  "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   pathname === link.href
-                    ? "text-primary-700"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "bg-primary-800 text-accent-400"
+                    : "text-primary-200 hover:bg-primary-800 hover:text-white"
                 )}
               >
                 {link.label}
@@ -53,7 +53,7 @@ export function PublicHeader() {
             ))}
             <Link
               href="/login"
-              className="ml-3 rounded-lg bg-primary-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-800"
+              className="ml-3 rounded-lg bg-accent-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-600"
             >
               Organizer Login
             </Link>
@@ -66,9 +66,9 @@ export function PublicHeader() {
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
-              <X className="h-6 w-6 text-gray-600" />
+              <X className="h-6 w-6 text-primary-200" />
             ) : (
-              <Menu className="h-6 w-6 text-gray-600" />
+              <Menu className="h-6 w-6 text-primary-200" />
             )}
           </button>
         </div>
@@ -76,7 +76,7 @@ export function PublicHeader() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="border-t border-gray-100 bg-white md:hidden">
+        <div className="border-t border-primary-800 bg-primary-900 md:hidden">
           <Container>
             <nav className="flex flex-col gap-1 py-4">
               {navLinks.map((link) => (
@@ -86,8 +86,8 @@ export function PublicHeader() {
                   className={cn(
                     "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     pathname === link.href
-                      ? "bg-primary-50 text-primary-700"
-                      : "text-gray-600 hover:bg-gray-50"
+                      ? "bg-primary-800 text-accent-400"
+                      : "text-primary-200 hover:bg-primary-800"
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -96,7 +96,7 @@ export function PublicHeader() {
               ))}
               <Link
                 href="/login"
-                className="mt-2 rounded-lg bg-primary-700 px-4 py-2 text-center text-sm font-medium text-white"
+                className="mt-2 rounded-lg bg-accent-500 px-4 py-2 text-center text-sm font-medium text-white"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Organizer Login

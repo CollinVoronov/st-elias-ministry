@@ -50,10 +50,10 @@ export default async function ImpactPage() {
       <Container>
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">
-          <h1 className="font-display text-4xl font-bold text-gray-900">
+          <h1 className="font-display text-4xl font-bold text-primary-900">
             Our Community Impact
           </h1>
-          <p className="mt-4 text-lg text-gray-500">
+          <p className="mt-4 text-lg text-gray-600">
             Together, St. Elias church members are making a real difference in Austin.
             Here&apos;s a look at what we&apos;ve accomplished.
           </p>
@@ -90,10 +90,10 @@ export default async function ImpactPage() {
         {/* Recent Completed Events */}
         {recentEvents.length > 0 && (
           <div className="mt-16">
-            <h2 className="font-display text-2xl font-bold text-gray-900">
+            <h2 className="font-display text-2xl font-bold text-primary-900">
               Recent Events
             </h2>
-            <p className="mt-2 text-gray-500">
+            <p className="mt-2 text-gray-600">
               Our most recently completed community service events.
             </p>
             <div className="mt-6 space-y-4">
@@ -103,8 +103,8 @@ export default async function ImpactPage() {
                   className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-4"
                 >
                   <div>
-                    <h3 className="font-medium text-gray-900">{event.title}</h3>
-                    <p className="mt-0.5 text-sm text-gray-500">
+                    <h3 className="font-medium text-primary-900">{event.title}</h3>
+                    <p className="mt-0.5 text-sm text-gray-600">
                       {new Date(event.date).toLocaleDateString("en-US", {
                         month: "long",
                         day: "numeric",

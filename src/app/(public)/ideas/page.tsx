@@ -68,10 +68,10 @@ export default async function IdeasPage() {
                         {idea.status.replace("_", " ")}
                       </Badge>
                     </div>
-                    <h3 className="mt-3 text-lg font-semibold text-gray-900 group-hover:text-primary-700">
+                    <h3 className="mt-3 text-lg font-semibold text-primary-900 group-hover:text-primary-700">
                       {idea.title}
                     </h3>
-                    <p className="mt-1 line-clamp-3 text-sm text-gray-500">
+                    <p className="mt-1 line-clamp-3 text-sm text-gray-600">
                       {idea.description}
                     </p>
                     <div className="mt-4 flex items-center gap-4 text-sm text-gray-400">

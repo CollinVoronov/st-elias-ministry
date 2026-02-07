@@ -47,25 +47,25 @@ export function EventCard({
               {ministry.name}
             </Badge>
           )}
-          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-700">
+          <h3 className="text-lg font-semibold text-primary-900 group-hover:text-accent-600">
             {title}
           </h3>
-          <p className="mt-1 line-clamp-2 text-sm text-gray-500">
+          <p className="mt-1 line-clamp-2 text-sm text-gray-600">
             {description}
           </p>
 
           <div className="mt-4 flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
               <CalendarDays className="h-4 w-4 text-primary-600" />
               <span>
                 {formatDate(date)} at {formatTime(date)}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
               <MapPin className="h-4 w-4 text-primary-600" />
               <span>{location}</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
               <Users className="h-4 w-4 text-primary-600" />
               <span>
                 {rsvpCount} volunteer{rsvpCount !== 1 ? "s" : ""} signed up

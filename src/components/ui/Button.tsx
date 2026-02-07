@@ -14,7 +14,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary:
     "bg-primary-700 text-white hover:bg-primary-800 focus:ring-primary-500",
   secondary:
-    "bg-gold-500 text-gray-900 hover:bg-gold-600 focus:ring-gold-400",
+    "bg-accent-500 text-white hover:bg-accent-600 focus:ring-accent-400",
   ghost:
     "bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-300",
   danger:

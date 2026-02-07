@@ -24,10 +24,10 @@ export default function LoginPage() {
       <div className="mx-auto w-full max-w-sm px-4">
         <div className="text-center">
           <Church className="mx-auto h-10 w-10 text-primary-700" />
-          <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">
+          <h1 className="mt-4 font-display text-2xl font-bold text-primary-900">
             Organizer Login
           </h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-gray-600">
             Sign in to manage events and volunteers.
           </p>
         </div>

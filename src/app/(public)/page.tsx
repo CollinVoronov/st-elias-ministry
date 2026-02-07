@@ -42,19 +42,20 @@ export default async function HomePage() {
     <>
       {/* Announcement Banner */}
       {announcement && (
-        <div className="bg-primary-700 px-4 py-3 text-center text-sm text-white">
+        <div className="bg-accent-500 px-4 py-3 text-center text-sm font-medium text-white">
           <strong>{announcement.title}:</strong> {announcement.body}
         </div>
       )}
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-24 text-white">
+      <section className="relative bg-gradient-to-br from-primary-800 via-primary-900 to-primary-900 py-24 text-white">
         <Container size="lg">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="font-display text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Serving Our Community Together
+              Serving Our Community{" "}
+              <span className="text-accent-400">Together</span>
             </h1>
-            <p className="mt-6 text-lg text-primary-100 sm:text-xl">
+            <p className="mt-6 text-lg text-primary-200 sm:text-xl">
               St. Elias Orthodox Church brings people together to make a difference
               in Austin. Join us in serving our neighbors through compassion, love,
               and action.
@@ -67,7 +68,7 @@ export default async function HomePage() {
                 </Button>
               </Link>
               <Link href="/ideas">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+                <Button size="lg" variant="outline" className="border-primary-400 text-white hover:bg-white/10">
                   Share an Idea
                 </Button>
               </Link>
@@ -77,13 +78,13 @@ export default async function HomePage() {
       </section>
 
       {/* What We Do Section */}
-      <section className="py-20">
+      <section className="bg-white py-20">
         <Container>
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-bold text-gray-900">
+            <h2 className="font-display text-3xl font-bold text-primary-900">
               How We Serve
             </h2>
-            <p className="mt-3 text-gray-500">
+            <p className="mt-3 text-gray-600">
               Our community service ministry connects volunteers with meaningful
               opportunities to serve Austin.
             </p>
@@ -94,34 +95,34 @@ export default async function HomePage() {
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-100">
                 <CalendarDays className="h-7 w-7 text-primary-700" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+              <h3 className="mt-4 text-lg font-semibold text-primary-900">
                 Find Events
               </h3>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-600">
                 Browse upcoming service events and sign up to volunteer with just
                 your name and email.
               </p>
             </div>
             <div className="text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold-100">
-                <Lightbulb className="h-7 w-7 text-gold-700" />
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent-50">
+                <Lightbulb className="h-7 w-7 text-accent-600" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+              <h3 className="mt-4 text-lg font-semibold text-primary-900">
                 Share Ideas
               </h3>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-600">
                 Propose new service opportunities and vote on ideas from fellow
                 church members.
               </p>
             </div>
             <div className="text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
-                <Heart className="h-7 w-7 text-green-700" />
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-sage-50">
+                <Heart className="h-7 w-7 text-sage-600" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+              <h3 className="mt-4 text-lg font-semibold text-primary-900">
                 Make an Impact
               </h3>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-600">
                 Track our collective impact and see how our community service
                 changes lives.
               </p>
@@ -131,14 +132,14 @@ export default async function HomePage() {
       </section>
 
       {/* Upcoming Events */}
-      <section className="bg-gray-50 py-20">
+      <section className="bg-cream py-20">
         <Container>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-display text-3xl font-bold text-gray-900">
+              <h2 className="font-display text-3xl font-bold text-primary-900">
                 Upcoming Events
               </h2>
-              <p className="mt-2 text-gray-500">
+              <p className="mt-2 text-gray-600">
                 Sign up to volunteer at an upcoming service event.
               </p>
             </div>
@@ -170,7 +171,7 @@ export default async function HomePage() {
           ) : (
             <div className="mt-8 rounded-xl border border-gray-200 bg-white py-16 text-center">
               <Users className="mx-auto h-12 w-12 text-gray-300" />
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+              <h3 className="mt-4 text-lg font-semibold text-primary-900">
                 No upcoming events yet
               </h3>
               <p className="mt-1 text-sm text-gray-500">
@@ -194,13 +195,13 @@ export default async function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20">
+      <section className="bg-white py-20">
         <Container size="md">
-          <div className="rounded-2xl bg-gradient-to-r from-primary-700 to-primary-900 p-12 text-center text-white">
+          <div className="rounded-2xl bg-gradient-to-r from-primary-800 to-primary-900 p-12 text-center text-white">
             <h2 className="font-display text-3xl font-bold">
               Ready to Make a Difference?
             </h2>
-            <p className="mt-3 text-primary-100">
+            <p className="mt-3 text-primary-200">
               Whether you have an hour or a whole day, there&apos;s a way for you to
               serve. Join our community and start making an impact today.
             </p>

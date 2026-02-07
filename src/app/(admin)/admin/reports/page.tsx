@@ -65,14 +65,14 @@ export default async function AdminReportsPage() {
       {/* Top Volunteers */}
       {data.topVolunteers.length > 0 && (
         <div className="mt-8 rounded-xl border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-primary-900">
             Most Active Volunteers
           </h2>
           <div className="mt-4 space-y-3">
             {data.topVolunteers.map((vol, index) => (
               <div
                 key={vol.id}
-                className="flex items-center justify-between rounded-lg p-3 hover:bg-gray-50"
+                className="flex items-center justify-between rounded-lg p-3 hover:bg-cream"
               >
                 <div className="flex items-center gap-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-700">
@@ -80,7 +80,7 @@ export default async function AdminReportsPage() {
                   </span>
                   <div>
                     <p className="text-sm font-medium text-gray-900">{vol.name}</p>
-                    <p className="text-xs text-gray-500">{vol.email}</p>
+                    <p className="text-xs text-gray-600">{vol.email}</p>
                   </div>
                 </div>
                 <div className="text-right">

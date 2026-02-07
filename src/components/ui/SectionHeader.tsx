@@ -11,9 +11,9 @@ function SectionHeader({ title, description, className, action }: SectionHeaderP
   return (
     <div className={cn("flex items-start justify-between", className)}>
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">{title}</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-primary-900">{title}</h2>
         {description && (
-          <p className="mt-1 text-sm text-gray-500">{description}</p>
+          <p className="mt-1 text-sm text-gray-600">{description}</p>
         )}
       </div>
       {action && <div>{action}</div>}

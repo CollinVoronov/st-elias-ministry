@@ -85,7 +85,7 @@ export default function AdminAnnouncementsPage() {
       {showForm && (
         <Card className="mt-6">
           <CardHeader>
-            <h2 className="text-lg font-semibold text-gray-900">New Announcement</h2>
+            <h2 className="text-lg font-semibold text-primary-900">New Announcement</h2>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -144,7 +144,7 @@ export default function AdminAnnouncementsPage() {
             >
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-medium text-gray-900">{ann.title}</h3>
+                  <h3 className="font-medium text-primary-900">{ann.title}</h3>
                   {ann.isPinned && (
                     <Badge variant="info">
                       <Pin className="mr-1 h-3 w-3" />
@@ -152,7 +152,7 @@ export default function AdminAnnouncementsPage() {
                     </Badge>
                   )}
                 </div>
-                <p className="mt-1 text-sm text-gray-500">{ann.body}</p>
+                <p className="mt-1 text-sm text-gray-600">{ann.body}</p>
                 <p className="mt-2 text-xs text-gray-400">
                   Published {new Date(ann.publishedAt).toLocaleDateString()}
                   {ann.expiresAt && ` · Expires ${new Date(ann.expiresAt).toLocaleDateString()}`}

@@ -7,10 +7,10 @@ export default function VerifyPage() {
       <Container size="sm">
         <div className="mx-auto max-w-sm text-center">
           <Mail className="mx-auto h-12 w-12 text-primary-600" />
-          <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">
+          <h1 className="mt-4 font-display text-2xl font-bold text-primary-900">
             Check Your Email
           </h1>
-          <p className="mt-3 text-gray-500">
+          <p className="mt-3 text-gray-600">
             A sign-in link has been sent to your email address. Click the link in
             the email to sign in to the admin panel.
           </p>

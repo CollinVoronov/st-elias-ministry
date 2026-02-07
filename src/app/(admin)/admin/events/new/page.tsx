@@ -64,19 +64,19 @@ export default function NewEventPage() {
     <Container size="md">
       <Link
         href="/admin/events"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-700"
+        className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-primary-700"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Events
       </Link>
 
-      <h1 className="mt-4 font-display text-2xl font-bold text-gray-900">
+      <h1 className="mt-4 font-display text-2xl font-bold text-primary-900">
         Create New Event
       </h1>
 
       <Card className="mt-6">
         <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900">Event Details</h2>
+          <h2 className="text-lg font-semibold text-primary-900">Event Details</h2>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

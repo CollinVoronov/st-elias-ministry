@@ -34,10 +34,10 @@ export function AdminSidebar() {
       <div className="flex h-16 items-center gap-2 border-b border-gray-100 px-6">
         <Church className="h-6 w-6 text-primary-700" />
         <div className="flex flex-col">
-          <span className="font-display text-sm font-bold leading-tight text-gray-900">
+          <span className="font-display text-sm font-bold leading-tight text-primary-900">
             St. Elias
           </span>
-          <span className="text-xs leading-tight text-gray-500">Admin Panel</span>
+          <span className="text-xs leading-tight text-gray-600">Admin Panel</span>
         </div>
       </div>
 
@@ -55,7 +55,7 @@ export function AdminSidebar() {
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary-50 text-primary-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  : "text-gray-600 hover:bg-cream hover:text-gray-900"
               )}
             >
               <item.icon className="h-4 w-4" />
@@ -69,7 +69,7 @@ export function AdminSidebar() {
       <div className="border-t border-gray-100 px-3 py-4">
         <Link
           href="/"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-cream hover:text-gray-900"
         >
           <Church className="h-4 w-4" />
           View Public Site
@@ -77,7 +77,7 @@ export function AdminSidebar() {
         <form action="/api/auth/signout" method="POST">
           <button
             type="submit"
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-red-600"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-cream hover:text-red-600"
           >
             <LogOut className="h-4 w-4" />
             Sign Out

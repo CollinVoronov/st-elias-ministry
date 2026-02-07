@@ -73,7 +73,7 @@ export function SignUpForm({ eventId, roles }: SignUpFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Sign Up to Volunteer</h3>
+      <h3 className="text-lg font-semibold text-primary-900">Sign Up to Volunteer</h3>
 
       {serverError && (
         <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">

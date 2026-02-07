@@ -53,7 +53,7 @@ export default async function IdeaDetailPage({ params }: Props) {
       <Container size="md">
         <Link
           href="/ideas"
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-700"
+          className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-primary-700"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Ideas
@@ -63,7 +63,7 @@ export default async function IdeaDetailPage({ params }: Props) {
           <Badge variant={statusBadgeVariant[idea.status] || "default"}>
             {idea.status.replace("_", " ")}
           </Badge>
-          <h1 className="mt-3 font-display text-3xl font-bold text-gray-900">
+          <h1 className="mt-3 font-display text-3xl font-bold text-primary-900">
             {idea.title}
           </h1>
           <p className="mt-2 text-sm text-gray-400">
@@ -76,11 +76,11 @@ export default async function IdeaDetailPage({ params }: Props) {
           </p>
 
           <div className="mt-4 flex items-center gap-4">
-            <span className="flex items-center gap-1 text-sm text-gray-500">
+            <span className="flex items-center gap-1 text-sm text-gray-600">
               <ThumbsUp className="h-4 w-4" />
               {idea._count.votes} vote{idea._count.votes !== 1 ? "s" : ""}
             </span>
-            <span className="flex items-center gap-1 text-sm text-gray-500">
+            <span className="flex items-center gap-1 text-sm text-gray-600">
               <MessageCircle className="h-4 w-4" />
               {idea._count.comments} comment{idea._count.comments !== 1 ? "s" : ""}
             </span>
@@ -92,14 +92,14 @@ export default async function IdeaDetailPage({ params }: Props) {
 
           {/* Comments Section */}
           <div className="mt-12 border-t border-gray-200 pt-8">
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-primary-900">
               Comments ({idea._count.comments})
             </h2>
 
             {idea.comments.length > 0 ? (
               <div className="mt-4 space-y-4">
                 {idea.comments.map((comment) => (
-                  <div key={comment.id} className="rounded-lg bg-gray-50 p-4">
+                  <div key={comment.id} className="rounded-lg bg-cream p-4">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium text-gray-900">
                         {comment.authorName}
