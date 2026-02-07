@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Mail, Phone, CalendarDays, MapPin, Users } from "lucide-react";
+import { ArrowLeft, Mail, Phone, CalendarDays, MapPin, Users, Pencil } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -68,11 +68,19 @@ export default async function AdminEventDetailPage({ params }: Props) {
             Organized by {event.organizer.name}
           </p>
         </div>
-        <Link href={`/events/${event.id}`}>
-          <Button variant="outline" size="sm">
-            View Public Page
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href={`/admin/events/${event.id}/edit`}>
+            <Button variant="outline" size="sm">
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Button>
+          </Link>
+          <Link href={`/events/${event.id}`}>
+            <Button variant="outline" size="sm">
+              View Public Page
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Stats */}

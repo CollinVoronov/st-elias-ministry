@@ -39,8 +39,9 @@ export const ideaSchema = z.object({
 export type IdeaInput = z.infer<typeof ideaSchema>;
 
 export const announcementSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  body: z.string().min(10, "Body must be at least 10 characters"),
+  title: z.string().min(3, "Subject must be at least 3 characters"),
+  body: z.string().min(10, "Message must be at least 10 characters"),
+  previewText: z.string().optional(),
   isPinned: z.boolean().optional(),
   expiresAt: z.string().optional(),
 });

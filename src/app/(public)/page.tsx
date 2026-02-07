@@ -1,18 +1,81 @@
-import { Heart, Users, CalendarDays, Clock, MapPin, Phone } from "lucide-react";
+import { Heart, Users, CalendarDays, Clock, MapPin, Phone, Megaphone } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { StatsCard } from "@/components/ui/StatsCard";
 import { EventsPageContent } from "@/components/events/EventsPageContent";
 import { prisma } from "@/lib/prisma";
+import { formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-async function getAnnouncement() {
-  return prisma.announcement.findFirst({
+// ── Recurring event expansion ──
+
+function expandRecurringEvents<T extends { date: string; isRecurring: boolean; recurrencePattern?: string | null }>(
+  events: T[]
+): T[] {
+  const now = new Date();
+  const threeMonthsLater = new Date(now);
+  threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
+
+  const result: T[] = [];
+
+  for (const event of events) {
+    result.push(event);
+
+    if (!event.isRecurring || !event.recurrencePattern) continue;
+
+    const baseDate = new Date(event.date);
+    let nextDate = new Date(baseDate);
+
+    for (let i = 0; i < 52; i++) {
+      switch (event.recurrencePattern) {
+        case "weekly":
+          nextDate = new Date(nextDate);
+          nextDate.setDate(nextDate.getDate() + 7);
+          break;
+        case "biweekly":
+          nextDate = new Date(nextDate);
+          nextDate.setDate(nextDate.getDate() + 14);
+          break;
+        case "monthly":
+          nextDate = new Date(nextDate);
+          nextDate.setMonth(nextDate.getMonth() + 1);
+          break;
+        case "first-saturday": {
+          const current = new Date(nextDate);
+          current.setMonth(current.getMonth() + 1);
+          current.setDate(1);
+          while (current.getDay() !== 6) {
+            current.setDate(current.getDate() + 1);
+          }
+          current.setHours(baseDate.getHours(), baseDate.getMinutes(), 0, 0);
+          nextDate = current;
+          break;
+        }
+        default:
+          nextDate = new Date(nextDate);
+          nextDate.setDate(nextDate.getDate() + 7);
+      }
+
+      if (nextDate > threeMonthsLater) break;
+      if (nextDate <= now) continue;
+
+      result.push({ ...event, date: nextDate.toISOString() });
+    }
+  }
+
+  return result.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+}
+
+// ── Data fetchers ──
+
+async function getAnnouncements() {
+  return prisma.announcement.findMany({
     where: {
       isPinned: true,
       OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
     },
     orderBy: { publishedAt: "desc" },
+    take: 3,
   });
 }
 
@@ -23,11 +86,18 @@ async function getCalendarEvents() {
       id: true,
       title: true,
       date: true,
+      isExternal: true,
+      isRecurring: true,
+      recurrencePattern: true,
       ministry: { select: { name: true, color: true } },
     },
     orderBy: { date: "asc" },
   });
-  return events.map((e) => ({ ...e, date: e.date.toISOString() }));
+  const mapped = events.map((e) => ({
+    ...e,
+    date: e.date.toISOString(),
+  }));
+  return expandRecurringEvents(mapped);
 }
 
 async function getListEvents() {
@@ -42,7 +112,7 @@ async function getListEvents() {
     },
     orderBy: { date: "asc" },
   });
-  return events.map((e) => ({
+  const mapped = events.map((e) => ({
     id: e.id,
     title: e.title,
     description: e.description,
@@ -51,8 +121,13 @@ async function getListEvents() {
     imageUrl: e.imageUrl,
     maxVolunteers: e.maxVolunteers,
     rsvpCount: e._count.rsvps,
+    isExternal: e.isExternal,
+    isRecurring: e.isRecurring,
+    recurrencePattern: e.recurrencePattern,
+    externalOrganizer: e.externalOrganizer,
     ministry: e.ministry ? { name: e.ministry.name, color: e.ministry.color } : null,
   }));
+  return expandRecurringEvents(mapped);
 }
 
 async function getImpactStats() {
@@ -71,8 +146,8 @@ async function getImpactStats() {
 }
 
 export default async function HomePage() {
-  const [announcement, calendarEvents, listEvents, stats] = await Promise.all([
-    getAnnouncement(),
+  const [announcements, calendarEvents, listEvents, stats] = await Promise.all([
+    getAnnouncements(),
     getCalendarEvents(),
     getListEvents(),
     getImpactStats(),
@@ -80,13 +155,6 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Announcement Banner */}
-      {announcement && (
-        <div className="bg-accent-500 px-4 py-3 text-center text-sm font-medium text-white">
-          <strong>{announcement.title}:</strong> {announcement.body}
-        </div>
-      )}
-
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-800 via-primary-900 to-primary-900 py-24 text-white">
         <Container size="lg">
@@ -103,6 +171,39 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
+
+      {/* Announcements Section */}
+      {announcements.length > 0 && (
+        <section className="bg-primary-800 py-16">
+          <Container>
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="font-display text-3xl font-bold text-white">
+                Announcements
+              </h2>
+            </div>
+            <div className={`mt-8 grid gap-6 ${announcements.length === 1 ? "max-w-xl mx-auto" : announcements.length === 2 ? "sm:grid-cols-2 max-w-3xl mx-auto" : "sm:grid-cols-2 lg:grid-cols-3"}`}>
+              {announcements.map((a) => (
+                <div
+                  key={a.id}
+                  className="rounded-xl border border-primary-600 bg-primary-700 p-6"
+                >
+                  <div className="flex items-center gap-2">
+                    <Megaphone className="h-5 w-5 text-accent-400" />
+                    <h3 className="font-semibold text-white">{a.title}</h3>
+                  </div>
+                  {a.previewText && (
+                    <p className="mt-2 text-sm text-primary-200">{a.previewText}</p>
+                  )}
+                  <p className="mt-2 text-sm text-primary-300 line-clamp-3">{a.body}</p>
+                  <p className="mt-3 text-xs text-primary-400">
+                    {formatDate(a.publishedAt)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* Events Section */}
       <section id="events" className="scroll-mt-16 bg-primary-900 py-20">

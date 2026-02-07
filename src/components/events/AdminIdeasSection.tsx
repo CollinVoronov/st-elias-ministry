@@ -102,7 +102,7 @@ export function AdminIdeasSection({ initialIdeas }: { initialIdeas: IdeaData[] }
                   )}
                   {(idea.status === "APPROVED" || idea.status === "SUBMITTED") && (
                     <Link
-                      href={`/admin/events/new?title=${encodeURIComponent(idea.title)}&description=${encodeURIComponent(idea.description)}`}
+                      href={`/admin/events/new?title=${encodeURIComponent(idea.title)}&description=${encodeURIComponent(idea.description)}&ideaId=${idea.id}`}
                     >
                       <Button variant="outline" size="sm" title="Create event from this idea">
                         <Plus className="h-4 w-4" />

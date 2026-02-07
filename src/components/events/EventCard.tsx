@@ -13,6 +13,8 @@ interface EventCardProps {
   imageUrl?: string | null;
   maxVolunteers?: number | null;
   rsvpCount: number;
+  isExternal?: boolean;
+  externalOrganizer?: string | null;
   ministry?: { name: string; color: string | null } | null;
 }
 
@@ -25,6 +27,8 @@ export function EventCard({
   imageUrl,
   maxVolunteers,
   rsvpCount,
+  isExternal,
+  externalOrganizer,
   ministry,
 }: EventCardProps) {
   const spotsLeft = maxVolunteers ? maxVolunteers - rsvpCount : null;
@@ -42,11 +46,18 @@ export function EventCard({
           </div>
         )}
         <CardContent className={imageUrl ? "pt-4" : ""}>
-          {ministry && (
-            <Badge variant="ministry" color={ministry.color || "#4263eb"} className="mb-2">
-              {ministry.name}
-            </Badge>
-          )}
+          <div className="mb-2 flex flex-wrap gap-1">
+            {ministry && (
+              <Badge variant="ministry" color={ministry.color || "#4263eb"}>
+                {ministry.name}
+              </Badge>
+            )}
+            {isExternal && (
+              <Badge variant="warning">
+                {externalOrganizer || "Community Event"}
+              </Badge>
+            )}
+          </div>
           <h3 className="text-lg font-semibold text-primary-900 group-hover:text-accent-600">
             {title}
           </h3>

@@ -18,6 +18,7 @@ interface AnnouncementData {
   id: string;
   title: string;
   body: string;
+  previewText: string | null;
   isPinned: boolean;
   publishedAt: string;
   expiresAt: string | null;
@@ -31,11 +32,14 @@ export default function AdminAnnouncementsPage() {
   const {
     register,
     handleSubmit,
+    watch,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<AnnouncementInput>({
     resolver: zodResolver(announcementSchema),
   });
+
+  const watchIsPinned = watch("isPinned");
 
   useEffect(() => {
     fetch("/api/announcements")
@@ -90,9 +94,9 @@ export default function AdminAnnouncementsPage() {
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <Input
-                label="Title"
+                label="Subject"
                 id="title"
-                placeholder="Announcement title"
+                placeholder="Announcement subject line"
                 error={errors.title?.message}
                 {...register("title")}
               />
@@ -104,10 +108,11 @@ export default function AdminAnnouncementsPage() {
                 {...register("body")}
               />
               <Input
-                label="Expires At (optional)"
-                id="expiresAt"
-                type="datetime-local"
-                {...register("expiresAt")}
+                label="Preview Text (optional)"
+                id="previewText"
+                placeholder="Short summary for email previews"
+                error={errors.previewText?.message}
+                {...register("previewText")}
               />
               <div className="flex items-center gap-2">
                 <input
@@ -117,9 +122,17 @@ export default function AdminAnnouncementsPage() {
                   {...register("isPinned")}
                 />
                 <label htmlFor="isPinned" className="text-sm text-gray-700">
-                  Pin to top of landing page
+                  Show on landing page
                 </label>
               </div>
+              {watchIsPinned && (
+                <Input
+                  label="Expires At (optional)"
+                  id="expiresAt"
+                  type="datetime-local"
+                  {...register("expiresAt")}
+                />
+              )}
               <div className="flex justify-end gap-3">
                 <Button type="button" variant="ghost" onClick={() => setShowForm(false)}>
                   Cancel
@@ -148,10 +161,13 @@ export default function AdminAnnouncementsPage() {
                   {ann.isPinned && (
                     <Badge variant="info">
                       <Pin className="mr-1 h-3 w-3" />
-                      Pinned
+                      On Landing Page
                     </Badge>
                   )}
                 </div>
+                {ann.previewText && (
+                  <p className="mt-1 text-sm text-gray-500 italic">{ann.previewText}</p>
+                )}
                 <p className="mt-1 text-sm text-gray-600">{ann.body}</p>
                 <p className="mt-2 text-xs text-gray-400">
                   Published {new Date(ann.publishedAt).toLocaleDateString()}

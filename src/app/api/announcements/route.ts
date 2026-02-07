@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       data: {
         title: validated.title,
         body: validated.body,
+        previewText: validated.previewText || null,
         isPinned: validated.isPinned || false,
         expiresAt: validated.expiresAt ? new Date(validated.expiresAt) : null,
         authorId: session.user.id,
