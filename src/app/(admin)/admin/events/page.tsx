@@ -26,9 +26,12 @@ interface Props {
   searchParams: { ministry?: string };
 }
 
-async function getAllEvents(ministryId?: string) {
+async function getAllEvents(ministryId?: string, organizerId?: string) {
+  const where: Record<string, unknown> = {};
+  if (ministryId) where.ministryId = ministryId;
+  if (organizerId) where.organizerId = organizerId;
   return prisma.event.findMany({
-    where: ministryId ? { ministryId } : {},
+    where,
     include: {
       ministry: true,
       organizer: { select: { name: true } },
@@ -55,8 +58,10 @@ export default async function AdminEventsPage({ searchParams }: Props) {
 
   const isAdmin = session.user.role === "ADMIN";
 
+  const organizerFilter = isAdmin ? undefined : session.user.id;
+
   const [events, ministries, ideas] = await Promise.all([
-    getAllEvents(searchParams.ministry || undefined),
+    getAllEvents(searchParams.ministry || undefined, organizerFilter),
     getAllMinistries(),
     isAdmin ? getAllIdeas() : Promise.resolve([]),
   ]);

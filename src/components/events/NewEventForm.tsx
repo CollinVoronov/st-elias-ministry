@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Input } from "@/components/ui/Input";
@@ -13,6 +13,12 @@ import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardHeader } from "@/components/ui/Card";
 import { eventSchema, type EventInput } from "@/lib/validations";
+
+interface RoleInput {
+  name: string;
+  description: string;
+  spotsNeeded: number;
+}
 
 interface EventData {
   id: string;
@@ -30,6 +36,7 @@ interface EventData {
   isRecurring?: boolean;
   recurrencePattern?: string;
   externalOrganizer?: string;
+  roles?: Array<{ id: string; name: string; description: string | null; spotsNeeded: number }>;
 }
 
 interface NewEventFormProps {
@@ -48,6 +55,10 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
   const [newMinistryName, setNewMinistryName] = useState("");
   const [newMinistryColor, setNewMinistryColor] = useState("#4263eb");
   const [creatingMinistry, setCreatingMinistry] = useState(false);
+  const [roles, setRoles] = useState<RoleInput[]>(
+    event?.roles?.map((r) => ({ name: r.name, description: r.description || "", spotsNeeded: r.spotsNeeded })) || []
+  );
+  const [rolesExpanded, setRolesExpanded] = useState(!!event?.roles?.length);
 
   useEffect(() => {
     fetch("/api/ministries")
@@ -123,6 +134,7 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
         isRecurring: data.isRecurring || false,
         recurrencePattern: data.recurrencePattern || undefined,
         externalOrganizer: data.externalOrganizer || undefined,
+        roles: roles.filter((r) => r.name.trim()),
       };
 
       const url = isEditing ? `/api/events/${event!.id}` : "/api/events";
@@ -384,6 +396,96 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
                 error={errors.imageUrl?.message}
                 {...register("imageUrl")}
               />
+            </fieldset>
+
+            {/* Volunteer Roles */}
+            <fieldset className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <legend className="px-1 text-sm font-semibold text-primary-900">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 hover:text-primary-700"
+                  onClick={() => setRolesExpanded(!rolesExpanded)}
+                >
+                  Volunteer Roles
+                  {rolesExpanded ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </button>
+              </legend>
+              {rolesExpanded && (
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-500">
+                    Define specific roles volunteers can sign up for (e.g., &quot;Kitchen Helper&quot;, &quot;Setup Crew&quot;).
+                  </p>
+                  {roles.map((role, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-3 rounded-lg border border-gray-200 bg-white p-3"
+                    >
+                      <div className="flex-1 space-y-3">
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <Input
+                            label="Role Name"
+                            id={`role-name-${index}`}
+                            required
+                            placeholder="e.g., Kitchen Helper"
+                            value={role.name}
+                            onChange={(e) => {
+                              const updated = [...roles];
+                              updated[index] = { ...updated[index], name: e.target.value };
+                              setRoles(updated);
+                            }}
+                          />
+                          <Input
+                            label="Spots Needed"
+                            id={`role-spots-${index}`}
+                            type="number"
+                            min={1}
+                            value={role.spotsNeeded}
+                            onChange={(e) => {
+                              const updated = [...roles];
+                              updated[index] = { ...updated[index], spotsNeeded: Number(e.target.value) || 1 };
+                              setRoles(updated);
+                            }}
+                          />
+                        </div>
+                        <Input
+                          label="Description (optional)"
+                          id={`role-desc-${index}`}
+                          placeholder="Brief description of this role..."
+                          value={role.description}
+                          onChange={(e) => {
+                            const updated = [...roles];
+                            updated[index] = { ...updated[index], description: e.target.value };
+                            setRoles(updated);
+                          }}
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        className="mt-6 rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                        onClick={() => setRoles(roles.filter((_, i) => i !== index))}
+                        title="Remove role"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setRoles([...roles, { name: "", description: "", spotsNeeded: 1 }])
+                    }
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Role
+                  </Button>
+                </div>
+              )}
             </fieldset>
 
             <div className="flex justify-end gap-3 pt-4">

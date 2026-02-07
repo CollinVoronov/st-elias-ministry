@@ -12,7 +12,7 @@ interface Props {
 async function getEvent(id: string) {
   return prisma.event.findUnique({
     where: { id },
-    include: { ministry: true },
+    include: { ministry: true, roles: true },
   });
 }
 
@@ -42,6 +42,7 @@ export default async function EditEventPage({ params }: Props) {
         isRecurring: event.isRecurring,
         recurrencePattern: event.recurrencePattern || undefined,
         externalOrganizer: event.externalOrganizer || undefined,
+        roles: event.roles,
       }}
     />
   );

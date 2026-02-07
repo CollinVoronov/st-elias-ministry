@@ -54,6 +54,17 @@ export async function POST(request: Request) {
       },
     });
 
+    if (body.roles?.length) {
+      await prisma.eventRole.createMany({
+        data: body.roles.map((r: { name: string; description?: string; spotsNeeded?: number }) => ({
+          name: r.name,
+          description: r.description || null,
+          spotsNeeded: r.spotsNeeded || 1,
+          eventId: event.id,
+        })),
+      });
+    }
+
     return NextResponse.json({ data: event }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.name === "ZodError") {

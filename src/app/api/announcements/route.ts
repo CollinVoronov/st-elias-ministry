@@ -25,6 +25,9 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validated = announcementSchema.parse(body);
 
+    // Admins auto-publish; organizers create as draft for approval
+    const status = session.user.role === "ADMIN" ? "PUBLISHED" : "DRAFT";
+
     const announcement = await prisma.announcement.create({
       data: {
         title: validated.title,
@@ -33,6 +36,7 @@ export async function POST(request: Request) {
         isPinned: validated.isPinned || false,
         expiresAt: validated.expiresAt ? new Date(validated.expiresAt) : null,
         authorId: session.user.id,
+        status,
       },
     });
 

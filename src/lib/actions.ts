@@ -1,7 +1,9 @@
 "use server";
 
 import { signOut } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export async function signOutAction() {
-  await signOut({ redirectTo: "/login" });
+  await signOut({ redirect: false });
+  redirect("/login");
 }

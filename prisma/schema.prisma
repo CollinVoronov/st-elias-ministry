@@ -39,6 +39,11 @@ enum IdeaStatus {
   DECLINED
 }
 
+enum AnnouncementStatus {
+  DRAFT
+  PUBLISHED
+}
+
 // ============================================
 // AUTH — Organizers/Admins only
 // ============================================
@@ -216,12 +221,13 @@ model Ministry {
 }
 
 model Announcement {
-  id          String    @id @default(cuid())
+  id          String             @id @default(cuid())
   title       String
   body        String
   previewText String?
-  isPinned    Boolean   @default(false)
-  publishedAt DateTime  @default(now())
+  isPinned    Boolean            @default(false)
+  status      AnnouncementStatus @default(DRAFT)
+  publishedAt DateTime           @default(now())
   expiresAt   DateTime?
 
   authorId String

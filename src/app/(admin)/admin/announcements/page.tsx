@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Megaphone, Plus, Trash2, Pin } from "lucide-react";
+import { Megaphone, Plus, Trash2, Pin, Pencil, Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Input } from "@/components/ui/Input";
@@ -22,12 +22,14 @@ interface AnnouncementData {
   isPinned: boolean;
   publishedAt: string;
   expiresAt: string | null;
+  status: string;
 }
 
 export default function AdminAnnouncementsPage() {
   const [announcements, setAnnouncements] = useState<AnnouncementData[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const {
     register,
@@ -51,18 +53,54 @@ export default function AdminAnnouncementsPage() {
       .catch(() => setLoading(false));
   }, []);
 
-  const onSubmit = async (data: AnnouncementInput) => {
-    const res = await fetch("/api/announcements", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+  const startEditing = (ann: AnnouncementData) => {
+    setEditingId(ann.id);
+    setShowForm(true);
+    reset({
+      title: ann.title,
+      body: ann.body,
+      previewText: ann.previewText ?? "",
+      isPinned: ann.isPinned,
+      expiresAt: ann.expiresAt ?? "",
     });
+  };
 
-    if (res.ok) {
-      const result = await res.json();
-      setAnnouncements((prev) => [result.data, ...prev]);
-      setShowForm(false);
-      reset();
+  const cancelEditing = () => {
+    setEditingId(null);
+    setShowForm(false);
+    reset();
+  };
+
+  const onSubmit = async (data: AnnouncementInput) => {
+    if (editingId) {
+      const res = await fetch(`/api/announcements/${editingId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        setAnnouncements((prev) =>
+          prev.map((a) => (a.id === editingId ? result.data : a))
+        );
+        setEditingId(null);
+        setShowForm(false);
+        reset();
+      }
+    } else {
+      const res = await fetch("/api/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        setAnnouncements((prev) => [result.data, ...prev]);
+        setShowForm(false);
+        reset();
+      }
     }
   };
 
@@ -73,13 +111,33 @@ export default function AdminAnnouncementsPage() {
     }
   };
 
+  const approveAnnouncement = async (id: string) => {
+    const res = await fetch(`/api/announcements/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "PUBLISHED" }),
+    });
+
+    if (res.ok) {
+      const result = await res.json();
+      setAnnouncements((prev) =>
+        prev.map((a) => (a.id === id ? result.data : a))
+      );
+    }
+  };
+
   return (
     <Container>
       <SectionHeader
         title="Announcements"
         description="Create and manage announcements shown on the public site."
         action={
-          <Button onClick={() => setShowForm(!showForm)}>
+          <Button onClick={() => {
+            if (editingId) {
+              cancelEditing();
+            }
+            setShowForm(!showForm);
+          }}>
             <Plus className="h-4 w-4" />
             New Announcement
           </Button>
@@ -89,7 +147,9 @@ export default function AdminAnnouncementsPage() {
       {showForm && (
         <Card className="mt-6">
           <CardHeader>
-            <h2 className="text-lg font-semibold text-primary-900">New Announcement</h2>
+            <h2 className="text-lg font-semibold text-primary-900">
+              {editingId ? "Edit Announcement" : "New Announcement"}
+            </h2>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -136,11 +196,15 @@ export default function AdminAnnouncementsPage() {
                 />
               )}
               <div className="flex justify-end gap-3">
-                <Button type="button" variant="ghost" onClick={() => setShowForm(false)}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={editingId ? cancelEditing : () => setShowForm(false)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" isLoading={isSubmitting}>
-                  Publish
+                  {editingId ? "Save Changes" : "Publish"}
                 </Button>
               </div>
             </form>
@@ -166,6 +230,11 @@ export default function AdminAnnouncementsPage() {
                       On Landing Page
                     </Badge>
                   )}
+                  {ann.status === "PUBLISHED" ? (
+                    <Badge variant="success">Published</Badge>
+                  ) : ann.status === "DRAFT" ? (
+                    <Badge variant="warning">Pending Approval</Badge>
+                  ) : null}
                 </div>
                 {ann.previewText && (
                   <p className="mt-1 text-sm text-gray-500 italic">{ann.previewText}</p>
@@ -176,13 +245,31 @@ export default function AdminAnnouncementsPage() {
                   {ann.expiresAt && ` · Expires ${new Date(ann.expiresAt).toLocaleDateString()}`}
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => deleteAnnouncement(ann.id)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => startEditing(ann)}
+                >
+                  <Pencil className="h-4 w-4 text-gray-500" />
+                </Button>
+                {ann.status === "DRAFT" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => approveAnnouncement(ann.id)}
+                  >
+                    <Check className="h-4 w-4 text-green-500" />
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => deleteAnnouncement(ann.id)}
+                >
+                  <Trash2 className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
             </div>
           ))}
         </div>

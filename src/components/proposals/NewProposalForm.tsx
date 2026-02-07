@@ -159,7 +159,6 @@ export function NewProposalForm({ organizationName, backUrl = "/community/propos
               <Input
                 label="Organization"
                 id="externalOrganizer"
-                value={organizationName}
                 disabled
                 {...register("externalOrganizer")}
               />

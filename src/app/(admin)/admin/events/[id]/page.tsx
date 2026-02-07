@@ -1,8 +1,9 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Mail, Phone, CalendarDays, MapPin, Users, Pencil } from "lucide-react";
+import { ArrowLeft, CalendarDays, MapPin, Users, Pencil } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { DeleteEventButton } from "@/components/events/DeleteEventButton";
+import { VolunteerTable } from "@/components/events/VolunteerTable";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -119,78 +120,24 @@ export default async function AdminEventDetailPage({ params }: Props) {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          {event.rsvps.length > 0 ? (
-            <table className="w-full">
-              <thead className="bg-cream">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
-                    Name
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
-                    Phone
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
-                    Role
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600">
-                    Signed Up
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {event.rsvps.map((rsvp) => (
-                  <tr key={rsvp.id} className="hover:bg-cream">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                      {rsvp.volunteer.name}
-                    </td>
-                    <td className="px-4 py-3">
-                      <a
-                        href={`mailto:${rsvp.volunteer.email}`}
-                        className="flex items-center gap-1 text-sm text-primary-600 hover:text-primary-800"
-                      >
-                        <Mail className="h-3 w-3" />
-                        {rsvp.volunteer.email}
-                      </a>
-                    </td>
-                    <td className="px-4 py-3">
-                      {rsvp.volunteer.phone ? (
-                        <a
-                          href={`tel:${rsvp.volunteer.phone}`}
-                          className="flex items-center gap-1 text-sm text-gray-600"
-                        >
-                          <Phone className="h-3 w-3" />
-                          {rsvp.volunteer.phone}
-                        </a>
-                      ) : (
-                        <span className="text-sm text-gray-300">—</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {rsvp.role?.name || "—"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge variant={rsvp.status === "CONFIRMED" ? "success" : "default"}>
-                        {rsvp.status}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-400">
-                      {new Date(rsvp.createdAt).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="py-8 text-center text-sm text-gray-400">
-              No volunteers signed up yet.
-            </div>
-          )}
+          <VolunteerTable
+            eventId={event.id}
+            rsvps={event.rsvps.map((r) => ({
+              id: r.id,
+              status: r.status,
+              note: r.note,
+              createdAt: r.createdAt.toISOString(),
+              volunteer: {
+                id: r.volunteer.id,
+                name: r.volunteer.name,
+                email: r.volunteer.email,
+                phone: r.volunteer.phone,
+              },
+              role: r.role ? { id: r.role.id, name: r.role.name } : null,
+            }))}
+            roles={event.roles.map((r) => ({ id: r.id, name: r.name }))}
+            isAdmin={isAdmin}
+          />
         </CardContent>
       </Card>
 

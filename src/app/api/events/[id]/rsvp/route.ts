@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { volunteerSignUpSchema } from "@/lib/validations";
 import { generateICS } from "@/lib/calendar";
@@ -124,6 +125,62 @@ export async function POST(
     }
     console.error("RSVP error:", error);
     return NextResponse.json({ error: "Failed to sign up" }, { status: 500 });
+  }
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await auth();
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { rsvpId, roleId, status } = body as {
+      rsvpId: string;
+      roleId?: string | null;
+      status?: string;
+    };
+
+    if (!rsvpId) {
+      return NextResponse.json({ error: "rsvpId is required" }, { status: 400 });
+    }
+
+    // Verify the RSVP belongs to this event
+    const existingRsvp = await prisma.eventRSVP.findFirst({
+      where: { id: rsvpId, eventId: params.id },
+    });
+
+    if (!existingRsvp) {
+      return NextResponse.json({ error: "RSVP not found" }, { status: 404 });
+    }
+
+    const updateData: { roleId?: string | null; status?: "CONFIRMED" | "WAITLISTED" | "CANCELLED" } = {};
+
+    if (roleId !== undefined) {
+      updateData.roleId = roleId || null;
+    }
+
+    if (status && ["CONFIRMED", "WAITLISTED", "CANCELLED"].includes(status)) {
+      updateData.status = status as "CONFIRMED" | "WAITLISTED" | "CANCELLED";
+    }
+
+    const updatedRsvp = await prisma.eventRSVP.update({
+      where: { id: rsvpId },
+      data: updateData,
+      include: {
+        volunteer: true,
+        role: true,
+      },
+    });
+
+    return NextResponse.json({ data: updatedRsvp });
+  } catch (error) {
+    console.error("RSVP update error:", error);
+    return NextResponse.json({ error: "Failed to update RSVP" }, { status: 500 });
   }
 }
 

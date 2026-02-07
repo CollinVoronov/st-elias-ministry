@@ -68,6 +68,20 @@ export async function PUT(
       },
     });
 
+    if (body.roles !== undefined) {
+      await prisma.eventRole.deleteMany({ where: { eventId: params.id } });
+      if (body.roles.length > 0) {
+        await prisma.eventRole.createMany({
+          data: body.roles.map((r: { name: string; description?: string; spotsNeeded?: number }) => ({
+            name: r.name,
+            description: r.description || null,
+            spotsNeeded: r.spotsNeeded || 1,
+            eventId: params.id,
+          })),
+        });
+      }
+    }
+
     return NextResponse.json({ data: event });
   } catch (error) {
     if (error instanceof Error && error.name === "ZodError") {

@@ -96,7 +96,9 @@ export default async function AdminProposalsPage() {
               <CardContent className="flex items-center justify-between py-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-3">
-                    <h3 className="font-medium text-primary-900">{proposal.title}</h3>
+                    <Link href={`/admin/proposals/${proposal.id}`} className="font-medium text-primary-900 hover:text-primary-700 hover:underline">
+                      <h3>{proposal.title}</h3>
+                    </Link>
                     <StatusBadge status={proposal.status} />
                   </div>
                   <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500">
@@ -148,7 +150,9 @@ export default async function AdminProposalsPage() {
                 <CardContent className="flex items-center justify-between py-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-3">
-                      <h3 className="font-medium text-primary-900">{proposal.title}</h3>
+                      <Link href={`/admin/proposals/${proposal.id}`} className="font-medium text-primary-900 hover:text-primary-700 hover:underline">
+                        <h3>{proposal.title}</h3>
+                      </Link>
                       <StatusBadge status={proposal.status} />
                     </div>
                     <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500">
