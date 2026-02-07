@@ -1,9 +1,5 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const EMAIL_FROM = process.env.EMAIL_FROM || "noreply@sainteliaschurch.org";
-
 interface SendRSVPConfirmationParams {
   to: string;
   volunteerName: string;
@@ -103,6 +99,9 @@ St. Elias Orthodox Church`;
   </p>
   <p style="color: #999; font-size: 12px;">St. Elias Orthodox Church, Austin, TX</p>
 </div>`;
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const EMAIL_FROM = process.env.EMAIL_FROM || "noreply@sainteliaschurch.org";
 
   await resend.emails.send({
     from: EMAIL_FROM,
