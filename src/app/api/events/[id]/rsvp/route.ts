@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { volunteerSignUpSchema } from "@/lib/validations";
+import { generateICS } from "@/lib/calendar";
+import { sendRSVPConfirmation } from "@/lib/email";
 
 export async function POST(
   request: Request,
@@ -85,6 +87,35 @@ export async function POST(
         event: { select: { title: true } },
       },
     });
+
+    // Fire-and-forget: send confirmation email with calendar invite
+    try {
+      const icsContent = generateICS({
+        title: event.title,
+        description: event.description,
+        startDate: new Date(event.date),
+        endDate: event.endDate ? new Date(event.endDate) : null,
+        location: event.location,
+        address: event.address,
+      });
+
+      sendRSVPConfirmation({
+        to: validated.email,
+        volunteerName: validated.name,
+        eventTitle: event.title,
+        eventDescription: event.description,
+        eventDate: new Date(event.date),
+        eventEndDate: event.endDate ? new Date(event.endDate) : null,
+        eventLocation: event.location,
+        eventAddress: event.address,
+        whatToBring: event.whatToBring,
+        icsContent,
+      }).catch((emailError) => {
+        console.error("Failed to send RSVP confirmation email:", emailError);
+      });
+    } catch (emailError) {
+      console.error("Failed to generate calendar invite:", emailError);
+    }
 
     return NextResponse.json({ data: rsvp }, { status: 201 });
   } catch (error) {
