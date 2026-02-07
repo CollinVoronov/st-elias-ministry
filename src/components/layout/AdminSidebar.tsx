@@ -3,10 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
   CalendarDays,
   Users,
-  Lightbulb,
   Megaphone,
   LogOut,
   Church,
@@ -14,10 +12,8 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/events", label: "Events & Opportunities", icon: CalendarDays },
   { href: "/admin/volunteers", label: "Volunteers", icon: Users },
-  { href: "/admin/ideas", label: "Ideas", icon: Lightbulb },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
 ];
 
@@ -40,9 +36,7 @@ export function AdminSidebar() {
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navItems.map((item) => {
-          const isActive = item.exact
-            ? pathname === item.href
-            : pathname.startsWith(item.href);
+          const isActive = pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}

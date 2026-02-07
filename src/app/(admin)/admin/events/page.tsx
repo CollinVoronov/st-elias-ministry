@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import { EventsFilterBar } from "@/components/events/EventsFilterBar";
+import { AdminIdeasSection } from "@/components/events/AdminIdeasSection";
 
 export const dynamic = "force-dynamic";
 
@@ -39,11 +40,29 @@ async function getAllMinistries() {
   return prisma.ministry.findMany({ orderBy: { name: "asc" } });
 }
 
+async function getAllIdeas() {
+  return prisma.idea.findMany({
+    include: { _count: { select: { votes: true, comments: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
 export default async function AdminEventsPage({ searchParams }: Props) {
-  const [events, ministries] = await Promise.all([
+  const [events, ministries, ideas] = await Promise.all([
     getAllEvents(searchParams.ministry || undefined),
     getAllMinistries(),
+    getAllIdeas(),
   ]);
+
+  const serializedIdeas = ideas.map((idea) => ({
+    id: idea.id,
+    title: idea.title,
+    description: idea.description,
+    submitterName: idea.submitterName,
+    status: idea.status,
+    createdAt: idea.createdAt.toISOString(),
+    _count: idea._count,
+  }));
 
   return (
     <Container>
@@ -129,8 +148,20 @@ export default async function AdminEventsPage({ searchParams }: Props) {
                     {event._count.rsvps}
                     {event.maxVolunteers && ` / ${event.maxVolunteers}`}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
-                    {event.ministry?.name || "—"}
+                  <td className="px-4 py-3">
+                    {event.ministry ? (
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="inline-block h-3 w-3 rounded-full"
+                          style={{ backgroundColor: event.ministry.color || "#6b7280" }}
+                        />
+                        <span className="text-sm text-gray-600">
+                          {event.ministry.name}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-gray-400">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link href={`/admin/events/${event.id}`}>
@@ -161,6 +192,9 @@ export default async function AdminEventsPage({ searchParams }: Props) {
           />
         </div>
       )}
+
+      {/* Ideas Section */}
+      <AdminIdeasSection initialIdeas={serializedIdeas} />
     </Container>
   );
 }

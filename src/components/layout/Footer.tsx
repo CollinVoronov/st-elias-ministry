@@ -29,12 +29,6 @@ export function Footer() {
               <Link href="/#events" className="text-sm text-primary-300 hover:text-white">
                 Events
               </Link>
-              <Link href="/#impact" className="text-sm text-primary-300 hover:text-white">
-                Our Impact
-              </Link>
-              <Link href="/#about" className="text-sm text-primary-300 hover:text-white">
-                About Us
-              </Link>
             </nav>
           </div>
 
