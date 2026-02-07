@@ -26,13 +26,13 @@ export function Footer() {
               Quick Links
             </h3>
             <nav className="mt-3 flex flex-col gap-2">
-              <Link href="/events" className="text-sm text-primary-300 hover:text-white">
-                Upcoming Events
+              <Link href="/#events" className="text-sm text-primary-300 hover:text-white">
+                Events
               </Link>
-              <Link href="/impact" className="text-sm text-primary-300 hover:text-white">
+              <Link href="/#impact" className="text-sm text-primary-300 hover:text-white">
                 Our Impact
               </Link>
-              <Link href="/about" className="text-sm text-primary-300 hover:text-white">
+              <Link href="/#about" className="text-sm text-primary-300 hover:text-white">
                 About Us
               </Link>
             </nav>

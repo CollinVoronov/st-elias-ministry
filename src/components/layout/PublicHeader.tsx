@@ -2,20 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Menu, X, Church } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Container } from "@/components/ui/Container";
 
 const navLinks = [
-  { href: "/events", label: "Events" },
-  { href: "/impact", label: "Our Impact" },
-  { href: "/about", label: "About" },
+  { href: "/#events", label: "Events" },
+  { href: "/#impact", label: "Our Impact" },
+  { href: "/#about", label: "About" },
 ];
 
 export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 border-b border-primary-800 bg-primary-900 shadow-md">
@@ -40,12 +37,7 @@ export function PublicHeader() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={cn(
-                  "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                  pathname === link.href
-                    ? "bg-primary-800 text-accent-400"
-                    : "text-primary-200 hover:bg-primary-800 hover:text-white"
-                )}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-primary-200 transition-colors hover:bg-primary-800 hover:text-white"
               >
                 {link.label}
               </Link>
@@ -82,12 +74,7 @@ export function PublicHeader() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={cn(
-                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                    pathname === link.href
-                      ? "bg-primary-800 text-accent-400"
-                      : "text-primary-200 hover:bg-primary-800"
-                  )}
+                  className="rounded-lg px-3 py-2 text-sm font-medium text-primary-200 transition-colors hover:bg-primary-800"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}

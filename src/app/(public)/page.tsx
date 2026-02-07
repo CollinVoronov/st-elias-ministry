@@ -1,26 +1,11 @@
-import Link from "next/link";
-import { ArrowRight, Heart, Users, CalendarDays } from "lucide-react";
+import { ArrowRight, Heart, Users, CalendarDays, Clock, MapPin, Phone } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { EventCard } from "@/components/events/EventCard";
+import { StatsCard } from "@/components/ui/StatsCard";
+import { EventsPageContent } from "@/components/events/EventsPageContent";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
-
-async function getUpcomingEvents() {
-  return prisma.event.findMany({
-    where: {
-      status: "PUBLISHED",
-      date: { gte: new Date() },
-    },
-    include: {
-      ministry: true,
-      _count: { select: { rsvps: true } },
-    },
-    orderBy: { date: "asc" },
-    take: 3,
-  });
-}
 
 async function getAnnouncement() {
   return prisma.announcement.findFirst({
@@ -32,10 +17,66 @@ async function getAnnouncement() {
   });
 }
 
+async function getCalendarEvents() {
+  const events = await prisma.event.findMany({
+    where: { status: "PUBLISHED" },
+    select: {
+      id: true,
+      title: true,
+      date: true,
+      ministry: { select: { name: true, color: true } },
+    },
+    orderBy: { date: "asc" },
+  });
+  return events.map((e) => ({ ...e, date: e.date.toISOString() }));
+}
+
+async function getListEvents() {
+  const events = await prisma.event.findMany({
+    where: {
+      status: "PUBLISHED",
+      date: { gte: new Date() },
+    },
+    include: {
+      ministry: true,
+      _count: { select: { rsvps: true } },
+    },
+    orderBy: { date: "asc" },
+  });
+  return events.map((e) => ({
+    id: e.id,
+    title: e.title,
+    description: e.description,
+    date: e.date.toISOString(),
+    location: e.location,
+    imageUrl: e.imageUrl,
+    maxVolunteers: e.maxVolunteers,
+    rsvpCount: e._count.rsvps,
+    ministry: e.ministry ? { name: e.ministry.name, color: e.ministry.color } : null,
+  }));
+}
+
+async function getImpactStats() {
+  const [eventCount, volunteerCount, totalHours, rsvpCount] = await Promise.all([
+    prisma.event.count({ where: { status: "COMPLETED" } }),
+    prisma.volunteer.count(),
+    prisma.volunteerHours.aggregate({ _sum: { hours: true } }),
+    prisma.eventRSVP.count({ where: { status: "CONFIRMED" } }),
+  ]);
+  return {
+    eventsCompleted: eventCount,
+    totalVolunteers: volunteerCount,
+    totalHours: totalHours._sum.hours || 0,
+    totalSignUps: rsvpCount,
+  };
+}
+
 export default async function HomePage() {
-  const [events, announcement] = await Promise.all([
-    getUpcomingEvents(),
+  const [announcement, calendarEvents, listEvents, stats] = await Promise.all([
     getAnnouncement(),
+    getCalendarEvents(),
+    getListEvents(),
+    getImpactStats(),
   ]);
 
   return (
@@ -61,23 +102,23 @@ export default async function HomePage() {
               and action.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link href="/events">
+              <a href="#events">
                 <Button size="lg" variant="secondary">
-                  View Upcoming Events
+                  View Events
                   <ArrowRight className="h-4 w-4" />
                 </Button>
-              </Link>
-              <Link href="/about">
+              </a>
+              <a href="#about">
                 <Button size="lg" variant="outline" className="border-primary-400 text-white hover:bg-white/10">
                   Learn More
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </Container>
       </section>
 
-      {/* What We Do Section */}
+      {/* How We Serve */}
       <section className="bg-white py-20">
         <Container>
           <div className="mx-auto max-w-2xl text-center">
@@ -89,15 +130,12 @@ export default async function HomePage() {
               opportunities to serve Austin.
             </p>
           </div>
-
           <div className="mt-12 grid gap-8 sm:grid-cols-3">
             <div className="text-center">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary-100">
                 <CalendarDays className="h-7 w-7 text-primary-700" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-primary-900">
-                Find Events
-              </h3>
+              <h3 className="mt-4 text-lg font-semibold text-primary-900">Find Events</h3>
               <p className="mt-2 text-sm text-gray-600">
                 Browse upcoming service events and sign up to volunteer with just
                 your name and email.
@@ -107,9 +145,7 @@ export default async function HomePage() {
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent-50">
                 <Users className="h-7 w-7 text-accent-600" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-primary-900">
-                Join a Team
-              </h3>
+              <h3 className="mt-4 text-lg font-semibold text-primary-900">Join a Team</h3>
               <p className="mt-2 text-sm text-gray-600">
                 Connect with fellow church members and volunteer together
                 through our ministry teams.
@@ -119,9 +155,7 @@ export default async function HomePage() {
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-sage-50">
                 <Heart className="h-7 w-7 text-sage-600" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-primary-900">
-                Make an Impact
-              </h3>
+              <h3 className="mt-4 text-lg font-semibold text-primary-900">Make an Impact</h3>
               <p className="mt-2 text-sm text-gray-600">
                 Track our collective impact and see how our community service
                 changes lives.
@@ -131,95 +165,161 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Upcoming Events */}
-      <section className="bg-cream py-20">
+      {/* Events Section */}
+      <section id="events" className="scroll-mt-16 bg-cream py-20">
         <Container>
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-display text-3xl font-bold text-primary-900">
-                Upcoming Events
-              </h2>
-              <p className="mt-2 text-gray-600">
-                Sign up to volunteer at an upcoming service event.
-              </p>
-            </div>
-            <Link href="/events" className="hidden sm:block">
-              <Button variant="outline">
-                View All Events
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="font-display text-3xl font-bold text-primary-900">
+              Events
+            </h2>
+            <p className="mt-3 text-gray-600">
+              Browse our community service events and sign up to volunteer.
+            </p>
           </div>
-
-          {events.length > 0 ? (
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {events.map((event) => (
-                <EventCard
-                  key={event.id}
-                  id={event.id}
-                  title={event.title}
-                  description={event.description}
-                  date={event.date}
-                  location={event.location}
-                  imageUrl={event.imageUrl}
-                  maxVolunteers={event.maxVolunteers}
-                  rsvpCount={event._count.rsvps}
-                  ministry={event.ministry}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-8 rounded-xl border border-gray-200 bg-white py-16 text-center">
-              <Users className="mx-auto h-12 w-12 text-gray-300" />
-              <h3 className="mt-4 text-lg font-semibold text-primary-900">
-                No upcoming events yet
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Check back soon or share an idea for a new service event!
-              </p>
-              <Link href="/events" className="mt-4 inline-block">
-                <Button variant="outline">View All Events</Button>
-              </Link>
-            </div>
-          )}
-
-          <div className="mt-6 text-center sm:hidden">
-            <Link href="/events">
-              <Button variant="outline">
-                View All Events
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+          <div className="mt-8">
+            <EventsPageContent
+              calendarEvents={calendarEvents}
+              listEvents={listEvents}
+            />
           </div>
         </Container>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-white py-20">
-        <Container size="md">
-          <div className="rounded-2xl bg-gradient-to-r from-primary-800 to-primary-900 p-12 text-center text-white">
-            <h2 className="font-display text-3xl font-bold">
-              Ready to Make a Difference?
+      {/* Impact Section */}
+      <section id="impact" className="scroll-mt-16 bg-white py-20">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="font-display text-3xl font-bold text-primary-900">
+              Our Community Impact
             </h2>
-            <p className="mt-3 text-primary-200">
-              Whether you have an hour or a whole day, there&apos;s a way for you to
-              serve. Join our community and start making an impact today.
+            <p className="mt-3 text-gray-600">
+              Together, St. Elias church members are making a real difference in Austin.
             </p>
-            <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Link href="/events">
-                <Button size="lg" variant="secondary">
-                  Browse Events
-                </Button>
-              </Link>
-              <Link href="/about">
-                <Button
-                  size="lg"
-                  variant="ghost"
-                  className="text-white hover:bg-white/10"
-                >
-                  Learn More About Us
-                </Button>
-              </Link>
+          </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <StatsCard
+              title="Events Completed"
+              value={stats.eventsCompleted}
+              icon={CalendarDays}
+              description="Community service events"
+            />
+            <StatsCard
+              title="Total Volunteers"
+              value={stats.totalVolunteers}
+              icon={Users}
+              description="Unique volunteers"
+            />
+            <StatsCard
+              title="Hours Served"
+              value={Math.round(stats.totalHours)}
+              icon={Clock}
+              description="Total volunteer hours"
+            />
+            <StatsCard
+              title="Volunteer Sign-ups"
+              value={stats.totalSignUps}
+              icon={Heart}
+              description="Total event registrations"
+            />
+          </div>
+        </Container>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="scroll-mt-16 bg-cream py-20">
+        <Container size="md">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="font-display text-3xl font-bold text-primary-900">
+              About Our Mission
+            </h2>
+            <p className="mt-3 text-gray-600">
+              St. Elias Orthodox Church is committed to serving the Austin community
+              through acts of love, compassion, and service.
+            </p>
+          </div>
+
+          {/* Mission */}
+          <div className="mt-12 rounded-2xl bg-primary-50 p-8 sm:p-12">
+            <div className="flex items-start gap-4">
+              <Heart className="mt-1 h-8 w-8 flex-shrink-0 text-primary-700" />
+              <div>
+                <h3 className="font-display text-2xl font-bold text-primary-900">
+                  Our Mission
+                </h3>
+                <p className="mt-3 text-gray-600 leading-relaxed">
+                  We believe that serving others is at the heart of our faith. Through
+                  community service events, volunteer outreach, and collaborative
+                  ministry, we strive to make a lasting positive impact on the lives
+                  of those around us. Every act of service, no matter how small,
+                  reflects God&apos;s love for all people.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Values */}
+          <div className="mt-12 grid gap-6 sm:grid-cols-2">
+            <div className="rounded-xl border border-gray-200 bg-white p-6">
+              <h3 className="text-lg font-semibold text-primary-900">Compassion</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                We approach every person and every situation with empathy and
+                understanding, recognizing the dignity in all people.
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-white p-6">
+              <h3 className="text-lg font-semibold text-primary-900">Community</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                We work together as one body, pooling our talents, time, and
+                resources to achieve more than we could alone.
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-white p-6">
+              <h3 className="text-lg font-semibold text-primary-900">Action</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Faith without works is incomplete. We put our beliefs into practice
+                through hands-on service to our neighbors.
+              </p>
+            </div>
+            <div className="rounded-xl border border-gray-200 bg-white p-6">
+              <h3 className="text-lg font-semibold text-primary-900">Growth</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                We continually seek new ways to serve, welcoming fresh ideas and
+                expanding our impact year after year.
+              </p>
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div className="mt-12 rounded-2xl bg-white border border-gray-200 p-8 sm:p-12">
+            <h3 className="font-display text-2xl font-bold text-primary-900">
+              Get in Touch
+            </h3>
+            <p className="mt-2 text-gray-600">
+              Want to learn more about our community service ministry? We&apos;d love to
+              hear from you.
+            </p>
+            <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:gap-8">
+              <div className="flex items-center gap-3">
+                <MapPin className="h-5 w-5 text-primary-600" />
+                <div>
+                  <p className="text-sm font-medium text-primary-900">Address</p>
+                  <p className="text-sm text-gray-600">
+                    408 East 11th Street, Austin, TX 78701
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone className="h-5 w-5 text-primary-600" />
+                <div>
+                  <p className="text-sm font-medium text-primary-900">Phone</p>
+                  <a
+                    href="tel:+15124762314"
+                    className="text-sm text-gray-600 hover:text-primary-700"
+                  >
+                    (512) 476-2314
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </Container>

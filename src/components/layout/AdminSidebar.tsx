@@ -8,7 +8,6 @@ import {
   Users,
   Lightbulb,
   Megaphone,
-  BarChart3,
   LogOut,
   Church,
 } from "lucide-react";
@@ -20,7 +19,6 @@ const navItems = [
   { href: "/admin/volunteers", label: "Volunteers", icon: Users },
   { href: "/admin/ideas", label: "Ideas", icon: Lightbulb },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
-  { href: "/admin/reports", label: "Reports", icon: BarChart3 },
 ];
 
 export function AdminSidebar() {
