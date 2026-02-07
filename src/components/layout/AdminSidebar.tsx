@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   CalendarDays,
   Users,
+  Shield,
   Megaphone,
   FileText,
   LogOut,
@@ -17,6 +18,7 @@ import { signOutAction } from "@/lib/actions";
 const navItems = [
   { href: "/admin/events", label: "Events & Opportunities", icon: CalendarDays },
   { href: "/admin/volunteers", label: "Volunteers", icon: Users },
+  { href: "/admin/users", label: "Users", icon: Shield },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
   { href: "/admin/proposals", label: "Proposals", icon: FileText },
 ];
