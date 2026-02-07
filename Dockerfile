@@ -43,4 +43,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["sh", "-c", "node ./node_modules/prisma/build/index.js db push --skip-generate && node server.js"]
+CMD ["sh", "-c", "node ./node_modules/prisma/build/index.js db push --skip-generate && echo \"UPDATE announcements SET status = 'PUBLISHED' WHERE status = 'DRAFT';\" | node ./node_modules/prisma/build/index.js db execute --stdin 2>/dev/null; node server.js"]

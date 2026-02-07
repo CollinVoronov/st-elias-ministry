@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { Calendar, MapPin, Building2, Plus, User } from "lucide-react";
+import { Calendar, MapPin, Building2, Plus, User, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProposalActions } from "@/components/proposals/ProposalActions";
@@ -92,67 +92,12 @@ export default async function AdminProposalsPage() {
       ) : (
         <div className="mb-8 space-y-3">
           {pendingProposals.map((proposal) => (
-            <Card key={proposal.id}>
-              <CardContent className="flex items-center justify-between py-4">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-3">
-                    <Link href={`/admin/proposals/${proposal.id}`} className="font-medium text-primary-900 hover:text-primary-700 hover:underline">
-                      <h3>{proposal.title}</h3>
-                    </Link>
-                    <StatusBadge status={proposal.status} />
-                  </div>
-                  <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      <Building2 className="h-3.5 w-3.5" />
-                      {proposal.organizer.organization || proposal.externalOrganizer || proposal.organizer.name}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5" />
-                      {proposal.date.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5" />
-                      {proposal.location}
-                    </span>
-                  </div>
-                  <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
-                    <User className="h-3 w-3" />
-                    Submitted by {proposal.organizer.name} ({proposal.organizer.email})
-                  </p>
-                  {proposal.description && (
-                    <p className="mt-2 text-sm text-gray-600 line-clamp-2">
-                      {proposal.description}
-                    </p>
-                  )}
-                </div>
-                {isAdmin && (
-                  <div className="ml-4 flex-shrink-0">
-                    <ProposalActions proposalId={proposal.id} />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {/* History */}
-      {pastProposals.length > 0 && (
-        <>
-          <h2 className="mb-3 text-lg font-semibold text-primary-900">History</h2>
-          <div className="space-y-3">
-            {pastProposals.map((proposal) => (
-              <Card key={proposal.id} className="opacity-75">
+            <Link key={proposal.id} href={`/admin/proposals/${proposal.id}`} className="block">
+              <Card className="cursor-pointer transition-shadow hover:shadow-md">
                 <CardContent className="flex items-center justify-between py-4">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-3">
-                      <Link href={`/admin/proposals/${proposal.id}`} className="font-medium text-primary-900 hover:text-primary-700 hover:underline">
-                        <h3>{proposal.title}</h3>
-                      </Link>
+                      <h3 className="font-medium text-primary-900">{proposal.title}</h3>
                       <StatusBadge status={proposal.status} />
                     </div>
                     <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500">
@@ -168,14 +113,73 @@ export default async function AdminProposalsPage() {
                           year: "numeric",
                         })}
                       </span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5" />
+                        {proposal.location}
+                      </span>
                     </div>
                     <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
                       <User className="h-3 w-3" />
-                      Submitted by {proposal.organizer.name}
+                      Submitted by {proposal.organizer.name} ({proposal.organizer.email})
                     </p>
+                    {proposal.description && (
+                      <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+                        {proposal.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="ml-4 flex flex-shrink-0 items-center gap-2">
+                    {isAdmin && (
+                      <div onClick={(e) => e.preventDefault()}>
+                        <ProposalActions proposalId={proposal.id} />
+                      </div>
+                    )}
+                    <ChevronRight className="h-5 w-5 text-gray-400" />
                   </div>
                 </CardContent>
               </Card>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* History */}
+      {pastProposals.length > 0 && (
+        <>
+          <h2 className="mb-3 text-lg font-semibold text-primary-900">History</h2>
+          <div className="space-y-3">
+            {pastProposals.map((proposal) => (
+              <Link key={proposal.id} href={`/admin/proposals/${proposal.id}`} className="block">
+                <Card className="cursor-pointer opacity-75 transition-shadow hover:shadow-md hover:opacity-100">
+                  <CardContent className="flex items-center justify-between py-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-medium text-primary-900">{proposal.title}</h3>
+                        <StatusBadge status={proposal.status} />
+                      </div>
+                      <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <Building2 className="h-3.5 w-3.5" />
+                          {proposal.organizer.organization || proposal.externalOrganizer || proposal.organizer.name}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3.5 w-3.5" />
+                          {proposal.date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+                      <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
+                        <User className="h-3 w-3" />
+                        Submitted by {proposal.organizer.name}
+                      </p>
+                    </div>
+                    <ChevronRight className="ml-4 h-5 w-5 flex-shrink-0 text-gray-400" />
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </>
