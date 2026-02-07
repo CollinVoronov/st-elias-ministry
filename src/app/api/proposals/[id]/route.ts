@@ -47,13 +47,13 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { action } = body as { action: "approve" | "decline" };
+    const { action } = body as { action: "approve" | "decline" | "revert" };
 
-    if (action !== "approve" && action !== "decline") {
+    if (action !== "approve" && action !== "decline" && action !== "revert") {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
 
-    const newStatus = action === "approve" ? "PUBLISHED" : "CANCELLED";
+    const newStatus = action === "approve" ? "PUBLISHED" : action === "decline" ? "CANCELLED" : "DRAFT";
 
     const proposal = await prisma.event.update({
       where: { id: params.id },

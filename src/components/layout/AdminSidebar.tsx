@@ -20,7 +20,7 @@ const navItems = [
   { href: "/admin/volunteers", label: "Volunteers", icon: Users },
   { href: "/admin/users", label: "Users", icon: Shield },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
-  { href: "/admin/proposals", label: "Proposals", icon: FileText },
+  { href: "/admin/proposals", label: "Proposals & Ideas", icon: FileText },
 ];
 
 export function AdminSidebar() {

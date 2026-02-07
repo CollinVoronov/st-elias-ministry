@@ -15,7 +15,7 @@ import { signOutAction } from "@/lib/actions";
 
 const navItems = [
   { href: "/admin/events", label: "Calendar", icon: CalendarDays },
-  { href: "/admin/proposals", label: "Proposals", icon: FileText },
+  { href: "/admin/proposals", label: "Proposals & Ideas", icon: FileText },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
 ];
 

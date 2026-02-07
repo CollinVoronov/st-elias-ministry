@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { Calendar, MapPin, Building2, Plus, User, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { ProposalActions } from "@/components/proposals/ProposalActions";
+import { IdeasSection } from "@/components/proposals/IdeasSection";
 
 export const dynamic = "force-dynamic";
 
@@ -59,11 +59,11 @@ export default async function AdminProposalsPage() {
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold text-primary-900">
-            {isAdmin ? "Community Proposals" : "Proposals"}
+            {isAdmin ? "Proposals & Ideas" : "Proposals"}
           </h1>
           <p className="mt-1 text-sm text-gray-600">
             {isAdmin
-              ? "Review and approve event proposals from organizers and community organizations."
+              ? "Review and manage event proposals and community ideas."
               : "Submit event proposals for the priest to review and approve."
             }
           </p>
@@ -128,14 +128,7 @@ export default async function AdminProposalsPage() {
                       </p>
                     )}
                   </div>
-                  <div className="ml-4 flex flex-shrink-0 items-center gap-2">
-                    {isAdmin && (
-                      <div onClick={(e) => e.preventDefault()}>
-                        <ProposalActions proposalId={proposal.id} />
-                      </div>
-                    )}
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
-                  </div>
+                  <ChevronRight className="ml-4 h-5 w-5 flex-shrink-0 text-gray-400" />
                 </CardContent>
               </Card>
             </Link>
@@ -147,7 +140,7 @@ export default async function AdminProposalsPage() {
       {pastProposals.length > 0 && (
         <>
           <h2 className="mb-3 text-lg font-semibold text-primary-900">History</h2>
-          <div className="space-y-3">
+          <div className="mb-8 space-y-3">
             {pastProposals.map((proposal) => (
               <Link key={proposal.id} href={`/admin/proposals/${proposal.id}`} className="block">
                 <Card className="cursor-pointer opacity-75 transition-shadow hover:shadow-md hover:opacity-100">
@@ -182,6 +175,14 @@ export default async function AdminProposalsPage() {
               </Link>
             ))}
           </div>
+        </>
+      )}
+
+      {/* Community Ideas */}
+      {isAdmin && (
+        <>
+          <h2 className="mb-3 text-lg font-semibold text-primary-900">Community Ideas</h2>
+          <IdeasSection isAdmin={isAdmin} />
         </>
       )}
     </div>

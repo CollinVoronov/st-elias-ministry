@@ -86,9 +86,9 @@ export default async function ProposalDetailPage({
             Submitted by {proposal.organizer.name} ({proposal.organizer.email})
           </p>
         </div>
-        {isAdmin && proposal.status === "DRAFT" && (
+        {isAdmin && (
           <div className="ml-4 flex-shrink-0">
-            <ProposalActions proposalId={proposal.id} />
+            <ProposalActions proposalId={proposal.id} status={proposal.status} />
           </div>
         )}
       </div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Megaphone } from "lucide-react";
+import { Megaphone, Lightbulb } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { EventsPageContent } from "@/components/events/EventsPageContent";
 import { prisma } from "@/lib/prisma";
@@ -146,6 +146,24 @@ export default async function HomePage() {
 
         <div className="mt-8">
           <EventsPageContent calendarEvents={calendarEvents} />
+        </div>
+
+        {/* Share an Idea CTA */}
+        <div className="mt-10 rounded-xl border border-accent-200 bg-white p-6 text-center">
+          <Lightbulb className="mx-auto h-6 w-6 text-accent-600" />
+          <h3 className="mt-2 font-display text-lg font-semibold text-primary-900">
+            Have an idea for a community service event?
+          </h3>
+          <p className="mt-1 text-sm text-gray-600">
+            Share your ideas and help shape our community outreach.
+          </p>
+          <Link
+            href="/ideas/new"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-800"
+          >
+            <Lightbulb className="h-4 w-4" />
+            Share an Idea
+          </Link>
         </div>
       </Container>
     </section>
