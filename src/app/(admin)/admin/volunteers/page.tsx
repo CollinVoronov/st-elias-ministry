@@ -1,4 +1,6 @@
+import { redirect } from "next/navigation";
 import { Users } from "lucide-react";
+import { auth } from "@/lib/auth";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -22,6 +24,10 @@ async function getVolunteers() {
 }
 
 export default async function AdminVolunteersPage() {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+  if (session.user.role !== "ADMIN") redirect("/admin/events");
+
   const volunteers = await getVolunteers();
 
   return (

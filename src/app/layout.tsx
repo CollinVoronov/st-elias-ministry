@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Inter } from "next/font/google";
+import { Providers } from "@/components/Providers";
 import "./globals.css";
 
 const ebGaramond = EB_Garamond({
@@ -37,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${ebGaramond.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-cream font-sans antialiased">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

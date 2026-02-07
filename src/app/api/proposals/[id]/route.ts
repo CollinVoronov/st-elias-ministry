@@ -41,8 +41,8 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only admin/organizer can approve or decline
-    if (session.user.role !== "ADMIN" && session.user.role !== "ORGANIZER") {
+    // Only admin (priest) can approve or decline proposals
+    if (session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Lightbulb, Check, X, Plus } from "lucide-react";
 import { Container } from "@/components/ui/Container";
@@ -29,10 +31,18 @@ const statusVariant: Record<string, "default" | "info" | "success" | "warning" |
 };
 
 export default function AdminIdeasPage() {
+  const router = useRouter();
+  const { data: session, status: sessionStatus } = useSession();
   const [ideas, setIdeas] = useState<IdeaData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (sessionStatus === "loading") return;
+    if (session?.user?.role !== "ADMIN") {
+      router.replace("/admin/events");
+      return;
+    }
+
     fetch("/api/ideas")
       .then((res) => res.json())
       .then((data) => {
@@ -40,7 +50,7 @@ export default function AdminIdeasPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [session, sessionStatus, router]);
 
   const updateStatus = async (ideaId: string, status: string) => {
     const res = await fetch(`/api/ideas/${ideaId}`, {

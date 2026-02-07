@@ -14,9 +14,10 @@ import { eventSchema, type EventInput } from "@/lib/validations";
 
 interface NewProposalFormProps {
   organizationName: string;
+  backUrl?: string;
 }
 
-export function NewProposalForm({ organizationName }: NewProposalFormProps) {
+export function NewProposalForm({ organizationName, backUrl = "/community/proposals" }: NewProposalFormProps) {
   const router = useRouter();
   const [serverError, setServerError] = useState("");
 
@@ -52,7 +53,7 @@ export function NewProposalForm({ organizationName }: NewProposalFormProps) {
         return;
       }
 
-      router.push("/community/proposals");
+      router.push(backUrl);
       router.refresh();
     } catch {
       setServerError("Something went wrong. Please try again.");
@@ -62,7 +63,7 @@ export function NewProposalForm({ organizationName }: NewProposalFormProps) {
   return (
     <div>
       <Link
-        href="/community/proposals"
+        href={backUrl}
         className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-primary-700"
       >
         <ArrowLeft className="h-4 w-4" />
@@ -165,7 +166,7 @@ export function NewProposalForm({ organizationName }: NewProposalFormProps) {
             </fieldset>
 
             <div className="flex justify-end gap-3 pt-4">
-              <Link href="/community/proposals">
+              <Link href={backUrl}>
                 <Button variant="ghost" type="button">
                   Cancel
                 </Button>

@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NewEventForm } from "@/components/events/NewEventForm";
 
@@ -16,6 +17,10 @@ async function getEvent(id: string) {
 }
 
 export default async function EditEventPage({ params }: Props) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+  if (session.user.role !== "ADMIN") redirect("/admin/events");
+
   const event = await getEvent(params.id);
   if (!event) notFound();
 

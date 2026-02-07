@@ -1,6 +1,8 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Plus, Calendar } from "lucide-react";
+import { auth } from "@/lib/auth";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Button } from "@/components/ui/Button";
@@ -48,10 +50,15 @@ async function getAllIdeas() {
 }
 
 export default async function AdminEventsPage({ searchParams }: Props) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
+  const isAdmin = session.user.role === "ADMIN";
+
   const [events, ministries, ideas] = await Promise.all([
     getAllEvents(searchParams.ministry || undefined),
     getAllMinistries(),
-    getAllIdeas(),
+    isAdmin ? getAllIdeas() : Promise.resolve([]),
   ]);
 
   const serializedIdeas = ideas.map((idea) => ({
@@ -67,15 +74,20 @@ export default async function AdminEventsPage({ searchParams }: Props) {
   return (
     <Container>
       <SectionHeader
-        title="Events & Opportunities"
-        description="Create, edit, and manage community service events and external opportunities."
+        title={isAdmin ? "Events & Opportunities" : "Calendar"}
+        description={isAdmin
+          ? "Create, edit, and manage community service events and external opportunities."
+          : "View published community service events and external opportunities."
+        }
         action={
-          <Link href="/admin/events/new">
-            <Button>
-              <Plus className="h-4 w-4" />
-              New Event
-            </Button>
-          </Link>
+          isAdmin ? (
+            <Link href="/admin/events/new">
+              <Button>
+                <Plus className="h-4 w-4" />
+                New Event
+              </Button>
+            </Link>
+          ) : undefined
         }
       />
 
@@ -180,21 +192,26 @@ export default async function AdminEventsPage({ searchParams }: Props) {
           <EmptyState
             icon={Calendar}
             title="No events found"
-            description="No events match your current filter. Try removing the filter or create a new event."
+            description={isAdmin
+              ? "No events match your current filter. Try removing the filter or create a new event."
+              : "No events match your current filter."
+            }
             action={
-              <Link href="/admin/events/new">
-                <Button>
-                  <Plus className="h-4 w-4" />
-                  Create Event
-                </Button>
-              </Link>
+              isAdmin ? (
+                <Link href="/admin/events/new">
+                  <Button>
+                    <Plus className="h-4 w-4" />
+                    Create Event
+                  </Button>
+                </Link>
+              ) : undefined
             }
           />
         </div>
       )}
 
-      {/* Ideas Section */}
-      <AdminIdeasSection initialIdeas={serializedIdeas} />
+      {/* Ideas Section — Admin only */}
+      {isAdmin && <AdminIdeasSection initialIdeas={serializedIdeas} />}
     </Container>
   );
 }

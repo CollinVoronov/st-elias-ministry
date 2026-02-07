@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminNewIdeaPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  if (session.user.role !== "ADMIN") redirect("/admin/events");
 
   return (
     <AdminNewIdeaForm

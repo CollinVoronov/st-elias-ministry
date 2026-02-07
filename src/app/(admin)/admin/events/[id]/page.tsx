@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Mail, Phone, CalendarDays, MapPin, Users, Pencil } from "lucide-react";
+import { auth } from "@/lib/auth";
 import { DeleteEventButton } from "@/components/events/DeleteEventButton";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
@@ -43,6 +44,10 @@ const statusVariant: Record<string, "default" | "success" | "warning" | "danger"
 };
 
 export default async function AdminEventDetailPage({ params }: Props) {
+  const session = await auth();
+  if (!session?.user) redirect("/login");
+
+  const isAdmin = session.user.role === "ADMIN";
   const event = await getEvent(params.id);
 
   if (!event) notFound();
@@ -70,18 +75,20 @@ export default async function AdminEventDetailPage({ params }: Props) {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href={`/admin/events/${event.id}/edit`}>
-            <Button variant="outline" size="sm">
-              <Pencil className="h-4 w-4" />
-              Edit
-            </Button>
-          </Link>
+          {isAdmin && (
+            <Link href={`/admin/events/${event.id}/edit`}>
+              <Button variant="outline" size="sm">
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Button>
+            </Link>
+          )}
           <Link href={`/events/${event.id}`}>
             <Button variant="outline" size="sm">
               View Public Page
             </Button>
           </Link>
-          <DeleteEventButton eventId={event.id} />
+          {isAdmin && <DeleteEventButton eventId={event.id} />}
         </div>
       </div>
 

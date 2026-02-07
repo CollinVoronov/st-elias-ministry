@@ -27,8 +27,13 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const session = await auth();
-    if (!session?.user?.id || session.user.role !== "COMMUNITY") {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Only COMMUNITY and ORGANIZER can submit proposals
+    if (session.user.role !== "COMMUNITY" && session.user.role !== "ORGANIZER") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const body = await request.json();
@@ -45,7 +50,7 @@ export async function POST(request: Request) {
         maxVolunteers: validated.maxVolunteers || null,
         whatToBring: validated.whatToBring || [],
         isExternal: true,
-        externalOrganizer: session.user.organization || null,
+        externalOrganizer: session.user.organization || session.user.name || null,
         organizerId: session.user.id,
         status: "DRAFT",
       },
