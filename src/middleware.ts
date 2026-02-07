@@ -4,12 +4,15 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req });
-  const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
-  const isLoginRoute = req.nextUrl.pathname.startsWith("/login");
+  const { pathname } = req.nextUrl;
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isIdeasRoute = pathname.startsWith("/ideas");
+  const isLoginRoute = pathname.startsWith("/login");
+  const isProtectedRoute = isAdminRoute || isIdeasRoute;
 
-  if (isAdminRoute && !token) {
+  if (isProtectedRoute && !token) {
     const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
+    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -21,5 +24,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/login/:path*"],
+  matcher: ["/admin/:path*", "/login/:path*", "/ideas/:path*"],
 };

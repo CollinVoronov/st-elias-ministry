@@ -1,10 +1,12 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import EmailProvider from "next-auth/providers/email";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  session: { strategy: "jwt" },
   providers: [
     EmailProvider({
       server: {
@@ -17,19 +19,47 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       from: process.env.EMAIL_FROM || "noreply@sainteliaschurch.org",
     }),
+    CredentialsProvider({
+      name: "Test Account",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const email = credentials?.email as string;
+        const password = credentials?.password as string;
+
+        if (
+          email === "organizer@sainteliaschurch.org" &&
+          password === "testpassword123"
+        ) {
+          const user = await prisma.user.findUnique({ where: { email } });
+          if (user) {
+            return { id: user.id, email: user.email, name: user.name };
+          }
+        }
+        return null;
+      },
+    }),
   ],
   pages: {
     signIn: "/login",
     verifyRequest: "/login/verify",
   },
   callbacks: {
-    async session({ session, user }) {
-      if (session.user) {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user && token.id) {
         const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
+          where: { id: token.id as string },
           select: { role: true },
         });
-        session.user.id = user.id;
+        session.user.id = token.id as string;
         session.user.role = dbUser?.role || "ORGANIZER";
       }
       return session;

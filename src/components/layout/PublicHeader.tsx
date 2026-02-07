@@ -9,7 +9,6 @@ import { Container } from "@/components/ui/Container";
 
 const navLinks = [
   { href: "/events", label: "Events" },
-  { href: "/ideas", label: "Ideas" },
   { href: "/impact", label: "Our Impact" },
   { href: "/about", label: "About" },
 ];

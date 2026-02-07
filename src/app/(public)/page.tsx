@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Heart, Users, CalendarDays, Lightbulb } from "lucide-react";
+import { ArrowRight, Heart, Users, CalendarDays } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { EventCard } from "@/components/events/EventCard";
@@ -67,9 +67,9 @@ export default async function HomePage() {
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/ideas">
+              <Link href="/about">
                 <Button size="lg" variant="outline" className="border-primary-400 text-white hover:bg-white/10">
-                  Share an Idea
+                  Learn More
                 </Button>
               </Link>
             </div>
@@ -105,14 +105,14 @@ export default async function HomePage() {
             </div>
             <div className="text-center">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent-50">
-                <Lightbulb className="h-7 w-7 text-accent-600" />
+                <Users className="h-7 w-7 text-accent-600" />
               </div>
               <h3 className="mt-4 text-lg font-semibold text-primary-900">
-                Share Ideas
+                Join a Team
               </h3>
               <p className="mt-2 text-sm text-gray-600">
-                Propose new service opportunities and vote on ideas from fellow
-                church members.
+                Connect with fellow church members and volunteer together
+                through our ministry teams.
               </p>
             </div>
             <div className="text-center">
@@ -177,8 +177,8 @@ export default async function HomePage() {
               <p className="mt-1 text-sm text-gray-500">
                 Check back soon or share an idea for a new service event!
               </p>
-              <Link href="/ideas" className="mt-4 inline-block">
-                <Button variant="outline">Share an Idea</Button>
+              <Link href="/events" className="mt-4 inline-block">
+                <Button variant="outline">View All Events</Button>
               </Link>
             </div>
           )}

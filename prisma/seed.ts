@@ -18,6 +18,19 @@ async function main() {
 
   console.log("Created admin user:", admin.email);
 
+  // Create test organizer
+  const organizer = await prisma.user.upsert({
+    where: { email: "organizer@sainteliaschurch.org" },
+    update: {},
+    create: {
+      email: "organizer@sainteliaschurch.org",
+      name: "Test Organizer",
+      role: "ORGANIZER",
+    },
+  });
+
+  console.log("Created test organizer:", organizer.email);
+
   // Create ministries
   const outreach = await prisma.ministry.upsert({
     where: { name: "Community Outreach" },
