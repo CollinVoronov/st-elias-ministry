@@ -22,15 +22,3 @@ export function formatTime(date: Date | string): string {
   });
 }
 
-export function formatDateTime(date: Date | string): string {
-  return `${formatDate(date)} at ${formatTime(date)}`;
-}
-
-export function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}

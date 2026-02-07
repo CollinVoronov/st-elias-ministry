@@ -118,6 +118,26 @@ export default async function HomePage() {
         </Container>
       </section>
 
+      {/* Events Section */}
+      <section id="events" className="scroll-mt-16 bg-cream py-20">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="font-display text-3xl font-bold text-primary-900">
+              Events
+            </h2>
+            <p className="mt-3 text-gray-600">
+              Browse our community service events and sign up to volunteer.
+            </p>
+          </div>
+          <div className="mt-8">
+            <EventsPageContent
+              calendarEvents={calendarEvents}
+              listEvents={listEvents}
+            />
+          </div>
+        </Container>
+      </section>
+
       {/* How We Serve */}
       <section className="bg-white py-20">
         <Container>
@@ -161,26 +181,6 @@ export default async function HomePage() {
                 changes lives.
               </p>
             </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* Events Section */}
-      <section id="events" className="scroll-mt-16 bg-cream py-20">
-        <Container>
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="font-display text-3xl font-bold text-primary-900">
-              Events
-            </h2>
-            <p className="mt-3 text-gray-600">
-              Browse our community service events and sign up to volunteer.
-            </p>
-          </div>
-          <div className="mt-8">
-            <EventsPageContent
-              calendarEvents={calendarEvents}
-              listEvents={listEvents}
-            />
           </div>
         </Container>
       </section>

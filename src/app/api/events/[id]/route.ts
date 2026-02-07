@@ -21,8 +21,6 @@ export async function GET(
           },
           orderBy: { createdAt: "desc" },
         },
-        checklist: { orderBy: { order: "asc" } },
-        resources: true,
         _count: { select: { rsvps: true } },
       },
     });

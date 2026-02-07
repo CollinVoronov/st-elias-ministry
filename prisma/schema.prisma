@@ -52,52 +52,10 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
   events        Event[]          @relation("EventOrganizer")
   announcements Announcement[]   @relation("AnnouncementAuthor")
 
   @@map("users")
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map("verification_tokens")
 }
 
 // ============================================
@@ -147,11 +105,8 @@ model Event {
 
   roles         EventRole[]
   rsvps         EventRSVP[]
-  checklist     ChecklistItem[]
-  resources     ResourceNeed[]
   hours         VolunteerHours[]
   comments      Comment[]
-  photos        EventPhoto[]
 
   @@map("events")
 }
@@ -184,36 +139,6 @@ model EventRSVP {
 
   @@unique([volunteerId, eventId])
   @@map("event_rsvps")
-}
-
-// ============================================
-// PLANNING TOOLS
-// ============================================
-
-model ChecklistItem {
-  id          String  @id @default(cuid())
-  text        String
-  isCompleted Boolean @default(false)
-  order       Int     @default(0)
-
-  eventId String
-  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-
-  @@map("checklist_items")
-}
-
-model ResourceNeed {
-  id          String  @id @default(cuid())
-  name        String
-  quantity    Int     @default(1)
-  isFulfilled Boolean @default(false)
-  fulfilledBy String?
-  notes       String?
-
-  eventId String
-  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-
-  @@map("resource_needs")
 }
 
 // ============================================
@@ -321,14 +246,3 @@ model VolunteerHours {
   @@map("volunteer_hours")
 }
 
-model EventPhoto {
-  id         String   @id @default(cuid())
-  url        String
-  caption    String?
-  uploadedAt DateTime @default(now())
-
-  eventId String
-  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-
-  @@map("event_photos")
-}

@@ -29,8 +29,6 @@ async function getEvent(id: string) {
         },
         orderBy: { createdAt: "desc" },
       },
-      checklist: { orderBy: { order: "asc" } },
-      resources: true,
       _count: { select: { rsvps: true } },
     },
   });
