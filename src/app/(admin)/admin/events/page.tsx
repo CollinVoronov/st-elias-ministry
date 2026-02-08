@@ -11,7 +11,6 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import { EventsFilterBar } from "@/components/events/EventsFilterBar";
-import { AdminIdeasSection } from "@/components/events/AdminIdeasSection";
 
 export const dynamic = "force-dynamic";
 
@@ -45,13 +44,6 @@ async function getAllMinistries() {
   return prisma.ministry.findMany({ orderBy: { name: "asc" } });
 }
 
-async function getAllIdeas() {
-  return prisma.idea.findMany({
-    include: { _count: { select: { votes: true, comments: true } } },
-    orderBy: { createdAt: "desc" },
-  });
-}
-
 export default async function AdminEventsPage({ searchParams }: Props) {
   const session = await auth();
   if (!session?.user) redirect("/login");
@@ -60,21 +52,10 @@ export default async function AdminEventsPage({ searchParams }: Props) {
 
   const organizerFilter = isAdmin ? undefined : session.user.id;
 
-  const [events, ministries, ideas] = await Promise.all([
+  const [events, ministries] = await Promise.all([
     getAllEvents(searchParams.ministry || undefined, organizerFilter),
     getAllMinistries(),
-    isAdmin ? getAllIdeas() : Promise.resolve([]),
   ]);
-
-  const serializedIdeas = ideas.map((idea) => ({
-    id: idea.id,
-    title: idea.title,
-    description: idea.description,
-    submitterName: idea.submitterName,
-    status: idea.status,
-    createdAt: idea.createdAt.toISOString(),
-    _count: idea._count,
-  }));
 
   return (
     <Container>
@@ -215,8 +196,6 @@ export default async function AdminEventsPage({ searchParams }: Props) {
         </div>
       )}
 
-      {/* Ideas Section — Admin only */}
-      {isAdmin && <AdminIdeasSection initialIdeas={serializedIdeas} />}
     </Container>
   );
 }

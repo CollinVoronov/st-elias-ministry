@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Lightbulb, Check, X, RotateCcw } from "lucide-react";
+import Link from "next/link";
+import { Lightbulb, Check, X, RotateCcw, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
@@ -118,6 +119,16 @@ export function IdeasSection({ isAdmin }: { isAdmin: boolean }) {
                       <X className="h-4 w-4" />
                     </Button>
                   </>
+                )}
+                {(idea.status === "APPROVED" || idea.status === "SUBMITTED") && (
+                  <Link
+                    href={`/admin/events/new?title=${encodeURIComponent(idea.title)}&description=${encodeURIComponent(idea.description)}&ideaId=${idea.id}`}
+                  >
+                    <Button variant="outline" size="sm" title="Create event from this idea">
+                      <Plus className="h-4 w-4" />
+                      Event
+                    </Button>
+                  </Link>
                 )}
                 {(idea.status === "APPROVED" || idea.status === "DECLINED") && (
                   <Button

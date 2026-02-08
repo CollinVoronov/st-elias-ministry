@@ -9,6 +9,7 @@ import {
   Shield,
   Megaphone,
   FileText,
+  Palette,
   LogOut,
   ExternalLink,
 } from "lucide-react";
@@ -20,6 +21,7 @@ const navItems = [
   { href: "/admin/volunteers", label: "Volunteers", icon: Users },
   { href: "/admin/users", label: "Users", icon: Shield },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
+  { href: "/admin/ministries", label: "Ministries", icon: Palette },
   { href: "/admin/proposals", label: "Proposals & Ideas", icon: FileText },
 ];
 

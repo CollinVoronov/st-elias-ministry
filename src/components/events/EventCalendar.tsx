@@ -16,6 +16,7 @@ import {
   subMonths,
 } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface CalendarEvent {
@@ -132,7 +133,7 @@ export function EventCalendar({ events }: EventCalendarProps) {
                   "min-h-[5rem] border-b border-r border-gray-100 p-1 md:min-h-[6.5rem] md:p-2",
                   !inCurrentMonth && "bg-gray-50/50",
                   isSelected && "bg-primary-50",
-                  "cursor-pointer hover:bg-gray-50 md:cursor-default md:hover:bg-transparent",
+                  "cursor-pointer hover:bg-gray-50",
                   isSelected && "md:bg-primary-50"
                 )}
                 onClick={() => setSelectedDay(day)}
@@ -193,46 +194,56 @@ export function EventCalendar({ events }: EventCalendarProps) {
         </div>
       </div>
 
-      {/* Mobile: Selected Day Panel */}
-      {selectedDay && (
-        <div className="mt-4 md:hidden">
-          <h3 className="font-display text-lg font-semibold text-primary-900">
-            {format(selectedDay, "EEEE, MMMM d")}
-          </h3>
-          {selectedDayEvents.length > 0 ? (
-            <div className="mt-2 space-y-2">
-              {selectedDayEvents.map((event) => (
-                <Link
-                  key={event.id}
-                  href={`/events/${event.id}`}
-                  className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 transition-shadow hover:shadow-sm"
-                >
-                  <span
-                    className="h-3 w-3 flex-shrink-0 rounded-full"
-                    style={{
-                      backgroundColor: event.ministry?.color || "#1e3a5f",
-                    }}
-                  />
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-primary-900">
-                      {event.title}
-                    </p>
-                    {event.ministry && (
-                      <p className="text-xs text-gray-500">
-                        {event.ministry.name}
-                      </p>
-                    )}
-                  </div>
-                </Link>
-              ))}
+      {/* Selected Day Panel */}
+      <AnimatePresence>
+        {selectedDay && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-4">
+              <h3 className="font-display text-lg font-semibold text-primary-900">
+                {format(selectedDay, "EEEE, MMMM d")}
+              </h3>
+              {selectedDayEvents.length > 0 ? (
+                <div className="mt-2 space-y-2">
+                  {selectedDayEvents.map((event) => (
+                    <Link
+                      key={event.id}
+                      href={`/events/${event.id}`}
+                      className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3 transition-shadow hover:shadow-sm"
+                    >
+                      <span
+                        className="h-3 w-3 flex-shrink-0 rounded-full"
+                        style={{
+                          backgroundColor: event.ministry?.color || "#1e3a5f",
+                        }}
+                      />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-primary-900">
+                          {event.title}
+                        </p>
+                        {event.ministry && (
+                          <p className="text-xs text-gray-500">
+                            {event.ministry.name}
+                          </p>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-gray-500">
+                  No events on this day.
+                </p>
+              )}
             </div>
-          ) : (
-            <p className="mt-2 text-sm text-gray-500">
-              No events on this day.
-            </p>
-          )}
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
