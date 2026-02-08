@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Megaphone, Plus, Trash2, Pin, Pencil, Check, X } from "lucide-react";
+import { Megaphone, Plus, Trash2, Pin, Pencil, Check, X, Share2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { ShareButtons } from "@/components/ui/ShareButtons";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -30,6 +31,7 @@ export function AnnouncementsManager({ isAdmin }: { isAdmin: boolean }) {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [sharingId, setSharingId] = useState<string | null>(null);
 
   const {
     register,
@@ -252,57 +254,87 @@ export function AnnouncementsManager({ isAdmin }: { isAdmin: boolean }) {
               {announcements.map((ann) => (
                 <div
                   key={ann.id}
-                  className="flex items-start justify-between rounded-xl border border-gray-200 bg-white p-4"
+                  className="overflow-hidden rounded-xl border border-gray-200 bg-white"
                 >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium text-primary-900">{ann.title}</h3>
-                      {ann.isPinned && (
-                        <Badge variant="info">
-                          <Pin className="mr-1 h-3 w-3" />
-                          On Landing Page
-                        </Badge>
+                  <div className="flex items-start justify-between p-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-primary-900">{ann.title}</h3>
+                        {ann.isPinned && (
+                          <Badge variant="info">
+                            <Pin className="mr-1 h-3 w-3" />
+                            On Landing Page
+                          </Badge>
+                        )}
+                        {ann.status === "PUBLISHED" ? (
+                          <Badge variant="success">Published</Badge>
+                        ) : ann.status === "DRAFT" ? (
+                          <Badge variant="warning">Pending Approval</Badge>
+                        ) : null}
+                      </div>
+                      {ann.previewText && (
+                        <p className="mt-1 text-sm text-gray-500 italic">{ann.previewText}</p>
                       )}
-                      {ann.status === "PUBLISHED" ? (
-                        <Badge variant="success">Published</Badge>
-                      ) : ann.status === "DRAFT" ? (
-                        <Badge variant="warning">Pending Approval</Badge>
-                      ) : null}
+                      <p className="mt-1 text-sm text-gray-600">{ann.body}</p>
+                      <p className="mt-2 text-xs text-gray-400">
+                        Published {new Date(ann.publishedAt).toLocaleDateString()}
+                        {ann.expiresAt && ` · Expires ${new Date(ann.expiresAt).toLocaleDateString()}`}
+                      </p>
                     </div>
-                    {ann.previewText && (
-                      <p className="mt-1 text-sm text-gray-500 italic">{ann.previewText}</p>
-                    )}
-                    <p className="mt-1 text-sm text-gray-600">{ann.body}</p>
-                    <p className="mt-2 text-xs text-gray-400">
-                      Published {new Date(ann.publishedAt).toLocaleDateString()}
-                      {ann.expiresAt && ` · Expires ${new Date(ann.expiresAt).toLocaleDateString()}`}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => startEditing(ann)}
-                    >
-                      <Pencil className="h-4 w-4 text-gray-500" />
-                    </Button>
-                    {isAdmin && ann.status === "DRAFT" && (
+                    <div className="flex items-center gap-1">
+                      {ann.status === "PUBLISHED" && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSharingId(sharingId === ann.id ? null : ann.id)}
+                        >
+                          <Share2 className="h-4 w-4 text-gray-500" />
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => approveAnnouncement(ann.id)}
+                        onClick={() => startEditing(ann)}
                       >
-                        <Check className="h-4 w-4 text-green-500" />
+                        <Pencil className="h-4 w-4 text-gray-500" />
                       </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteAnnouncement(ann.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
+                      {isAdmin && ann.status === "DRAFT" && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => approveAnnouncement(ann.id)}
+                        >
+                          <Check className="h-4 w-4 text-green-500" />
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteAnnouncement(ann.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
                   </div>
+                  <AnimatePresence>
+                    {sharingId === ann.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="border-t border-gray-100 px-4 py-3">
+                          <ShareButtons
+                            title={ann.title}
+                            text={ann.previewText || ann.body.slice(0, 120)}
+                            url={`/announcements/${ann.id}`}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
             </div>

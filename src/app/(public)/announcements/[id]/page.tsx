@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Megaphone } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { ShareButtons } from "@/components/ui/ShareButtons";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 
@@ -41,6 +42,14 @@ export default async function AnnouncementDetailPage({
           <p className="mt-2 text-sm text-gray-400">
             {formatDate(announcement.publishedAt)} · {announcement.author.name}
           </p>
+
+          <div className="mt-3">
+            <ShareButtons
+              title={announcement.title}
+              text={announcement.previewText || announcement.body.slice(0, 120)}
+              url={`/announcements/${announcement.id}`}
+            />
+          </div>
 
           {announcement.previewText && (
             <p className="mt-4 text-gray-600 italic">{announcement.previewText}</p>

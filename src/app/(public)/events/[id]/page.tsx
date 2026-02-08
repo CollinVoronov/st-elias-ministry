@@ -4,6 +4,7 @@ import { CalendarDays, MapPin, Users, Clock, Package } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent } from "@/components/ui/Card";
+import { ShareButtons } from "@/components/ui/ShareButtons";
 import { SignUpForm } from "@/components/events/SignUpForm";
 import { formatDate, formatTime } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
@@ -212,6 +213,18 @@ export default async function EventDetailPage({ params }: Props) {
                 <p className="mt-1 text-sm font-medium text-gray-700">
                   {event.organizer.name}
                 </p>
+              </div>
+
+              {/* Share */}
+              <div className="mt-4 rounded-xl bg-cream p-4">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wider text-gray-400">
+                  Spread the word
+                </p>
+                <ShareButtons
+                  title={event.title}
+                  text={`${formatDate(event.date)} · ${event.location}`}
+                  url={`/events/${event.id}`}
+                />
               </div>
             </div>
           </div>
