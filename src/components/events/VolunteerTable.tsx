@@ -247,7 +247,7 @@ function VolunteerRow({
         <td className="px-4 py-3 text-sm text-gray-600">
           {isAdmin ? (
             <select
-              className="rounded border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="min-w-[120px] rounded border border-gray-200 bg-white py-1 pl-2 pr-7 text-sm text-gray-700 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               value={rsvp.role?.id ?? ""}
               disabled={isSaving}
               onChange={(e) => {
@@ -270,16 +270,16 @@ function VolunteerRow({
           <div className="flex items-center gap-2">
             {isAdmin ? (
               <select
-                className="rounded border border-gray-200 bg-white px-2 py-1 text-sm text-gray-700 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="min-w-[120px] rounded border border-gray-200 bg-white py-1 pl-2 pr-7 text-sm text-gray-700 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 value={rsvp.status}
                 disabled={isSaving}
                 onChange={(e) => {
                   onUpdate(rsvp.id, { status: e.target.value });
                 }}
               >
-                <option value="CONFIRMED">CONFIRMED</option>
-                <option value="WAITLISTED">WAITLISTED</option>
-                <option value="CANCELLED">CANCELLED</option>
+                <option value="CONFIRMED">Confirmed</option>
+                <option value="WAITLISTED">Waitlisted</option>
+                <option value="CANCELLED">Cancelled</option>
               </select>
             ) : (
               <Badge variant={statusBadgeVariant[rsvp.status] ?? "default"}>
