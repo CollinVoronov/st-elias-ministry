@@ -9,7 +9,6 @@ import {
   Shield,
   Megaphone,
   FileText,
-  Palette,
   LogOut,
   ExternalLink,
 } from "lucide-react";
@@ -17,11 +16,10 @@ import { cn } from "@/lib/utils";
 import { signOutAction } from "@/lib/actions";
 
 const navItems = [
-  { href: "/admin/events", label: "Events & Opportunities", icon: CalendarDays },
+  { href: "/admin/events", label: "Events and Ministries", icon: CalendarDays },
   { href: "/admin/volunteers", label: "Volunteers", icon: Users },
   { href: "/admin/users", label: "Users", icon: Shield },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
-  { href: "/admin/ministries", label: "Ministries", icon: Palette },
   { href: "/admin/proposals", label: "Proposals & Ideas", icon: FileText },
 ];
 

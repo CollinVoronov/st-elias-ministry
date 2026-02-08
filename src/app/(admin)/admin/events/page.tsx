@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import { EventsFilterBar } from "@/components/events/EventsFilterBar";
+import { MinistryList } from "@/components/ministries/MinistryList";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,10 @@ async function getAllEvents(ministryId?: string, organizerId?: string) {
 }
 
 async function getAllMinistries() {
-  return prisma.ministry.findMany({ orderBy: { name: "asc" } });
+  return prisma.ministry.findMany({
+    include: { _count: { select: { events: true } } },
+    orderBy: { name: "asc" },
+  });
 }
 
 export default async function AdminEventsPage({ searchParams }: Props) {
@@ -60,10 +64,10 @@ export default async function AdminEventsPage({ searchParams }: Props) {
   return (
     <Container>
       <SectionHeader
-        title={isAdmin ? "Events & Opportunities" : "Calendar"}
+        title={isAdmin ? "Events and Ministries" : "Calendar"}
         description={isAdmin
-          ? "Create, edit, and manage community service events and external opportunities."
-          : "View published community service events and external opportunities."
+          ? "Create, edit, and manage community service events and ministries."
+          : "View published community service events."
         }
         action={
           isAdmin ? (
@@ -196,6 +200,22 @@ export default async function AdminEventsPage({ searchParams }: Props) {
         </div>
       )}
 
+      {isAdmin && (
+        <>
+          <h2 className="mt-10 text-lg font-semibold text-primary-900">Ministries</h2>
+          <div className="mt-3">
+            <MinistryList
+              initialMinistries={ministries.map((m) => ({
+                id: m.id,
+                name: m.name,
+                description: m.description,
+                color: m.color,
+                _count: m._count,
+              }))}
+            />
+          </div>
+        </>
+      )}
     </Container>
   );
 }
