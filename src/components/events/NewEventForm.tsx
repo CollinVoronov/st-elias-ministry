@@ -2,17 +2,30 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Toggle } from "@/components/ui/Toggle";
 import { eventSchema, type EventInput } from "@/lib/validations";
+
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="pt-8 pb-4 first:pt-0">
+        <h3 className="text-sm font-semibold uppercase tracking-wider text-primary-600">{title}</h3>
+        <div className="mt-1 border-b border-gray-200" />
+      </div>
+      <div className="space-y-4">{children}</div>
+    </div>
+  );
+}
 
 interface RoleInput {
   name: string;
@@ -72,6 +85,7 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<EventInput>({
     resolver: zodResolver(eventSchema),
@@ -183,246 +197,278 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
         {isEditing ? "Edit Event" : "Create New Event"}
       </h1>
 
-      <Card className="mt-6">
-        <CardHeader>
-          <h2 className="text-lg font-semibold text-primary-900">
-            {isEditing ? "Update Event Details" : "Event Details"}
-          </h2>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-0">
+          <AnimatePresence>
             {serverError && (
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                className="flex items-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700"
+              >
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
                 {serverError}
-              </div>
+              </motion.div>
             )}
+          </AnimatePresence>
 
-            {/* Basic Information */}
-            <fieldset className="space-y-4">
-              <legend className="text-sm font-semibold text-primary-900">Basic Information</legend>
+          {/* Basic Information */}
+          <FormSection title="Basic Information">
+            <Input
+              label="Event Title"
+              id="title"
+              required
+              placeholder="e.g., Community Garden Day"
+              error={errors.title?.message}
+              {...register("title")}
+            />
+            <Textarea
+              label="Description"
+              id="description"
+              placeholder="Describe what volunteers will be doing, who it helps, and any important details..."
+              error={errors.description?.message}
+              {...register("description")}
+            />
+          </FormSection>
+
+          {/* Date & Location */}
+          <FormSection title="Date & Location">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Event Title"
-                id="title"
+                label="Start Date & Time"
+                id="date"
                 required
-                placeholder="e.g., Community Garden Day"
-                error={errors.title?.message}
-                {...register("title")}
-              />
-              <Textarea
-                label="Description"
-                id="description"
-                placeholder="Describe what volunteers will be doing, who it helps, and any important details..."
-                error={errors.description?.message}
-                {...register("description")}
-              />
-            </fieldset>
-
-            {/* Date & Location */}
-            <fieldset className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <legend className="px-1 text-sm font-semibold text-primary-900">Date & Location</legend>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Input
-                  label="Start Date & Time"
-                  id="date"
-                  required
-                  type="datetime-local"
-                  error={errors.date?.message}
-                  {...register("date")}
-                />
-                <Input
-                  label="End Date & Time"
-                  id="endDate"
-                  type="datetime-local"
-                  error={errors.endDate?.message}
-                  {...register("endDate")}
-                />
-              </div>
-              <Input
-                label="Location"
-                id="location"
-                required
-                placeholder="e.g., St. Elias Church Hall"
-                error={errors.location?.message}
-                {...register("location")}
+                type="datetime-local"
+                error={errors.date?.message}
+                {...register("date")}
               />
               <Input
-                label="Full Address"
-                id="address"
-                placeholder="408 East 11th Street, Austin, TX 78701"
-                error={errors.address?.message}
-                {...register("address")}
+                label="End Date & Time"
+                id="endDate"
+                type="datetime-local"
+                error={errors.endDate?.message}
+                {...register("endDate")}
               />
-            </fieldset>
+            </div>
+            <Input
+              label="Location"
+              id="location"
+              required
+              placeholder="e.g., St. Elias Church Hall"
+              error={errors.location?.message}
+              {...register("location")}
+            />
+            <Input
+              label="Full Address"
+              id="address"
+              placeholder="408 East 11th Street, Austin, TX 78701"
+              error={errors.address?.message}
+              {...register("address")}
+            />
+          </FormSection>
 
-            {/* Additional Settings */}
-            <fieldset className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <legend className="px-1 text-sm font-semibold text-primary-900">Additional Settings</legend>
+          {/* Settings */}
+          <FormSection title="Settings">
+            <Input
+              label="Max Volunteers"
+              id="maxVolunteers"
+              type="number"
+              placeholder="Leave empty for unlimited"
+              error={errors.maxVolunteers?.message}
+              {...register("maxVolunteers", {
+                setValueAs: (v: string) => v === "" ? undefined : Number(v),
+              })}
+            />
 
-              <Input
-                label="Max Volunteers"
-                id="maxVolunteers"
-                type="number"
-                placeholder="Leave empty for unlimited"
-                error={errors.maxVolunteers?.message}
-                {...register("maxVolunteers", {
-                  setValueAs: (v: string) => v === "" ? undefined : Number(v),
-                })}
+            {/* Ministry Selection */}
+            <div>
+              <Select
+                label="Ministry"
+                id="ministryId"
+                options={ministries.map((m) => ({ value: m.id, label: m.name }))}
+                placeholder="Select ministry..."
+                error={errors.ministryId?.message}
+                {...register("ministryId")}
               />
-
-              {/* Ministry Selection with inline create */}
-              <div>
-                <div className="flex items-center gap-2">
-                  <div className="flex-1">
-                    <Select
-                      label="Ministry"
-                      id="ministryId"
-                      options={ministries.map((m) => ({ value: m.id, label: m.name }))}
-                      placeholder="Select ministry..."
-                      error={errors.ministryId?.message}
-                      {...register("ministryId")}
-                    />
-                  </div>
-                  <div className="pt-5">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowNewMinistry(!showNewMinistry)}
-                    >
-                      <Plus className="h-4 w-4" />
-                      New
-                    </Button>
-                  </div>
-                </div>
-                {showNewMinistry && (
-                  <div className="mt-2 flex items-end gap-2 rounded-lg border border-gray-200 bg-white p-3">
-                    <div className="flex-1">
-                      <Input
-                        label="Ministry Name"
-                        id="new-ministry-name"
-                        placeholder="e.g., Youth Ministry"
-                        value={newMinistryName}
-                        onChange={(e) => setNewMinistryName(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="new-ministry-color" className="mb-1 block text-sm font-medium text-gray-700">
-                        Color
-                      </label>
-                      <input
-                        type="color"
-                        id="new-ministry-color"
-                        value={newMinistryColor}
-                        onChange={(e) => setNewMinistryColor(e.target.value)}
-                        className="h-[38px] w-12 cursor-pointer rounded-lg border border-gray-300"
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={createMinistry}
-                      isLoading={creatingMinistry}
-                    >
-                      Add
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowNewMinistry(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              {/* Opportunity Type */}
-              <div className="space-y-3">
-                <h3 className="text-sm font-medium text-gray-700">
-                  Opportunity Type
-                </h3>
-                <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
-                  <label className="flex items-center gap-2 text-sm text-gray-600">
-                    <input
-                      type="checkbox"
-                      className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                      {...register("isExternal")}
-                    />
-                    External event (not hosted by St. Elias)
-                  </label>
-                  <label className="flex items-center gap-2 text-sm text-gray-600">
-                    <input
-                      type="checkbox"
-                      className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                      {...register("isRecurring")}
-                    />
-                    Recurring event
-                  </label>
-                </div>
-
-                {watchIsExternal && (
-                  <Input
-                    label="External Organizer"
-                    id="externalOrganizer"
-                    placeholder="e.g., Austin Food Bank, Habitat for Humanity"
-                    error={errors.externalOrganizer?.message}
-                    {...register("externalOrganizer")}
-                  />
-                )}
-
-                {watchIsRecurring && (
-                  <Select
-                    label="Recurrence Pattern"
-                    id="recurrencePattern"
-                    options={[
-                      { value: "weekly", label: "Weekly" },
-                      { value: "biweekly", label: "Every 2 weeks" },
-                      { value: "monthly", label: "Monthly" },
-                      { value: "first-saturday", label: "First Saturday of month" },
-                    ]}
-                    placeholder="Select pattern..."
-                    error={errors.recurrencePattern?.message}
-                    {...register("recurrencePattern")}
-                  />
-                )}
-              </div>
-
-              <Input
-                label="Event Image URL"
-                id="imageUrl"
-                type="url"
-                placeholder="https://example.com/image.jpg"
-                error={errors.imageUrl?.message}
-                {...register("imageUrl")}
-              />
-            </fieldset>
-
-            {/* Volunteer Roles */}
-            <fieldset className="space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <legend className="px-1 text-sm font-semibold text-primary-900">
+              {!showNewMinistry && (
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1 hover:text-primary-700"
-                  onClick={() => setRolesExpanded(!rolesExpanded)}
+                  onClick={() => setShowNewMinistry(true)}
+                  className="mt-1 inline-flex items-center gap-1 text-sm text-primary-600 hover:text-primary-700 transition-colors"
                 >
-                  Volunteer Roles
-                  {rolesExpanded ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
+                  <Plus className="h-3.5 w-3.5" />
+                  Create new ministry
                 </button>
-              </legend>
-              {rolesExpanded && (
-                <div className="space-y-4">
-                  <p className="text-sm text-gray-500">
-                    Define specific roles volunteers can sign up for (e.g., &quot;Kitchen Helper&quot;, &quot;Setup Crew&quot;).
-                  </p>
+              )}
+              <AnimatePresence>
+                {showNewMinistry && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-2 flex items-end gap-2 rounded-xl border border-primary-100 bg-primary-50/30 p-3">
+                      <div className="flex-1">
+                        <Input
+                          label="Ministry Name"
+                          id="new-ministry-name"
+                          placeholder="e.g., Youth Ministry"
+                          value={newMinistryName}
+                          onChange={(e) => setNewMinistryName(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="new-ministry-color" className="mb-1 block text-sm font-medium text-gray-700">
+                          Color
+                        </label>
+                        <input
+                          type="color"
+                          id="new-ministry-color"
+                          value={newMinistryColor}
+                          onChange={(e) => setNewMinistryColor(e.target.value)}
+                          className="h-[38px] w-12 cursor-pointer rounded-lg border border-gray-300"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={createMinistry}
+                        isLoading={creatingMinistry}
+                      >
+                        Add
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowNewMinistry(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Toggles for isExternal and isRecurring */}
+            <div className="space-y-3 rounded-xl bg-gray-50/50 p-4">
+              <Controller
+                name="isExternal"
+                control={control}
+                render={({ field }) => (
+                  <Toggle
+                    label="External event"
+                    description="Not hosted by St. Elias"
+                    checked={field.value ?? false}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+              <AnimatePresence>
+                {watchIsExternal && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-3">
+                      <Input
+                        label="External Organizer"
+                        id="externalOrganizer"
+                        placeholder="e.g., Austin Food Bank, Habitat for Humanity"
+                        error={errors.externalOrganizer?.message}
+                        {...register("externalOrganizer")}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <Controller
+                name="isRecurring"
+                control={control}
+                render={({ field }) => (
+                  <Toggle
+                    label="Recurring event"
+                    description="Repeats on a schedule"
+                    checked={field.value ?? false}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+              <AnimatePresence>
+                {watchIsRecurring && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-3">
+                      <Select
+                        label="Recurrence Pattern"
+                        id="recurrencePattern"
+                        options={[
+                          { value: "weekly", label: "Weekly" },
+                          { value: "biweekly", label: "Every 2 weeks" },
+                          { value: "monthly", label: "Monthly" },
+                          { value: "first-saturday", label: "First Saturday of month" },
+                        ]}
+                        placeholder="Select pattern..."
+                        error={errors.recurrencePattern?.message}
+                        {...register("recurrencePattern")}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <Input
+              label="Event Image URL"
+              id="imageUrl"
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              error={errors.imageUrl?.message}
+              {...register("imageUrl")}
+            />
+          </FormSection>
+
+          {/* Volunteer Roles */}
+          <FormSection title="Volunteer Roles">
+            <p className="text-sm text-gray-500">
+              Define specific roles volunteers can sign up for (e.g., &quot;Kitchen Helper&quot;, &quot;Setup Crew&quot;).
+            </p>
+
+            {roles.length === 0 && !rolesExpanded ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setRolesExpanded(true);
+                  setRoles([...roles, { name: "", description: "", spotsNeeded: 1 }]);
+                }}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-200 py-6 text-sm text-gray-500 transition-colors hover:border-primary-300 hover:text-primary-600"
+              >
+                <Plus className="h-4 w-4" /> Add volunteer roles
+              </button>
+            ) : (
+              <div className="space-y-4">
+                <AnimatePresence initial={false}>
                   {roles.map((role, index) => (
-                    <div
+                    <motion.div
                       key={index}
-                      className="flex items-start gap-3 rounded-lg border border-gray-200 bg-white p-3"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4"
                     >
                       <div className="flex-1 space-y-3">
                         <div className="grid gap-3 sm:grid-cols-2">
@@ -465,30 +511,33 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
                       </div>
                       <button
                         type="button"
-                        className="mt-6 rounded-lg p-2 text-gray-400 hover:bg-red-50 hover:text-red-500"
+                        className="mt-6 rounded-lg p-2 text-gray-300 hover:bg-red-50 hover:text-red-500"
                         onClick={() => setRoles(roles.filter((_, i) => i !== index))}
                         title="Remove role"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
-                    </div>
+                    </motion.div>
                   ))}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      setRoles([...roles, { name: "", description: "", spotsNeeded: 1 }])
-                    }
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Role
-                  </Button>
-                </div>
-              )}
-            </fieldset>
+                </AnimatePresence>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setRoles([...roles, { name: "", description: "", spotsNeeded: 1 }])
+                  }
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Role
+                </Button>
+              </div>
+            )}
+          </FormSection>
 
-            <div className="flex justify-end gap-3 pt-4">
+          {/* Sticky form actions */}
+          <div className="sticky bottom-0 -mx-6 sm:-mx-8 mt-8 border-t border-gray-100 bg-white/80 backdrop-blur-sm px-6 sm:px-8 py-4">
+            <div className="flex justify-end gap-3">
               <Link href={backHref}>
                 <Button variant="ghost" type="button">
                   Cancel
@@ -498,9 +547,9 @@ export function NewEventForm({ defaultTitle, defaultDescription, ideaId, event }
                 {isEditing ? "Update Event" : "Create Event"}
               </Button>
             </div>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+        </form>
+      </div>
     </Container>
   );
 }
